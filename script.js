@@ -1,24 +1,11 @@
-// --- Supabase Setup ---
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
-// Your Supabase project credentials
-const SUPABASE_URL = 'https://ynqlxqqeprgxjjusihlg.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlucWx4cXFlcHJneGpqdXNpaGxnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM4NTczMTEsImV4cCI6MjA2OTQzMzMxMX0.CtRdrVjnyy7atnFPwVGAhwpF08yDt-VDmVbJ8gnrVKM';
-
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
 // --- Global Variables ---
-let currentUserProfile = null; // Stores the currently logged-in user's profile data
-let html5QrCodeScanner = null; // Html5Qrcode instance
-let isScannerActive = false; // Flag to track scanner state
-let redeemTimerInterval = null; // To manage the countdown timer
-
-// This is the string from your specific dustbin QR code.
+const API_URL = 'http://localhost:5000/api'; // Your backend URL
+let currentUserProfile = null;
+let html5QrCodeScanner = null;
+let isScannerActive = false;
+let redeemTimerInterval = null;
 const EXPECTED_FRAME_QR_CONTENT = 'https://qrco.de/bgBWbc';
-// Cooldown period for scanning the same QR code (5 minutes)
-const QR_SCAN_COOLDOWN_MS = 5 * 60 * 1000;
 
-// Default coupons (can be moved to a Supabase table later)
 const defaultCoupons = [
     { id: 'coupon1', name: '10% Off at Green Mart', points: 100 },
     { id: 'coupon2', name: 'Free Coffee at EcoCafe', points: 50 },
@@ -36,20 +23,13 @@ const loginForm = document.getElementById('loginForm');
 const registerForm = document.getElementById('registerForm');
 
 // --- Core App Initialization ---
-
-/**
- * Initializes the application.
- */
 async function initApp() {
-    console.log("Smart Dust Bin App Initializing with Supabase...");
+    console.log("Smart Dust Bin App Initializing with Node/MongoDB backend...");
     setupEventListeners();
-    handleAuthStateChange(); // Check user session and listen for changes
+    await checkLoginState(); // Check if a token exists in localStorage
     showPage('dashboard');
 }
 
-/**
- * Sets up global event listeners.
- */
 function setupEventListeners() {
     loginForm?.addEventListener('submit', handleLogin);
     registerForm?.addEventListener('submit', handleRegister);
@@ -57,78 +37,61 @@ function setupEventListeners() {
     document.getElementById('passwordResetForm')?.addEventListener('submit', handlePasswordReset);
 }
 
-/**
- * Listens for authentication state changes (login, logout) and updates the UI.
- */
-function handleAuthStateChange() {
-    supabase.auth.onAuthStateChange(async (event, session) => {
-        if (event === "PASSWORD_RECOVERY") {
-            showPage('resetPassword');
-        } else if (event === 'SIGNED_IN' && session) {
-            // await loadUserProfile(session.user);
-        } else if (event === 'SIGNED_OUT') {
-            currentUserProfile = null;
-            updateUIForGuest();
-            if (!window.location.hash.includes('access_token')) {
-                authModal.style.display = 'flex';
-                showPage('dashboard');
-            }
-        }
-    });
-}
-
-/**
- * Loads the user's profile from the 'profiles' table.
- */
-async function loadUserProfile(user) {
-    showLoading('Waking up the server, please wait...');
-
-    try {
-        const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Timeout')), 10000) // 10 seconds
-        );
-        const fetchProfilePromise = supabase.from('profiles').select('*').eq('id', user.id).single();
-        const { data, error } = await Promise.race([fetchProfilePromise, timeoutPromise]);
-        
-        if (error) throw error;
-
-        currentUserProfile = data;
-        await updateUI();
-        authModal.style.display = 'none';
-        document.getElementById('forgotPasswordModal').style.display = 'none';
-        showPage('dashboard');
-
-    } catch (error) {
-        console.error("Error loading user profile:", error.message);
-        if (error.message === 'Timeout') {
-            showToast('Loading is taking too long. Please log in manually.', 'warning');
-            await logout();
-        } else {
-            showToast('Could not load your profile. Please try again.', 'error');
-            await logout();
-        }
-    } finally {
-        hideLoading();
+async function checkLoginState() {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+        await loadUserProfile(token);
+    } else {
+        updateUIForGuest();
+        authModal.style.display = 'flex';
     }
 }
 
+// --- NEW API HELPER ---
+async function apiRequest(endpoint, method = 'GET', body = null) {
+    const headers = { 'Content-Type': 'application/json' };
+    const token = localStorage.getItem('authToken');
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
 
-// --- Authentication & Password Functions ---
+    const config = {
+        method,
+        headers,
+    };
 
+    if (body) {
+        config.body = JSON.stringify(body);
+    }
+
+    try {
+        const response = await fetch(`${API_URL}${endpoint}`, config);
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.message || 'Something went wrong');
+        }
+        return data;
+    } catch (error) {
+        console.error(`API Error on ${endpoint}:`, error);
+        showToast(error.message || 'An API error occurred', 'error');
+        throw error;
+    }
+}
+
+// --- MODIFIED AUTH FUNCTIONS ---
 async function handleRegister(event) {
     event.preventDefault();
     showLoading();
     const username = document.getElementById('registerUsername').value;
     const email = document.getElementById('registerEmail').value;
     const password = document.getElementById('registerPassword').value;
+
     try {
-        const { error } = await supabase.auth.signUp({
-            email, password, options: { data: { username: username } }
-        });
-        if (error) throw error;
-        showToast('Registration successful!', 'success');
+        const data = await apiRequest('/auth/register', 'POST', { username, email, password });
+        showToast(data.message, 'success');
+        switchTab('login');
     } catch (error) {
-        showToast(error.message, 'error');
+        // Error toast is handled by apiRequest
     } finally {
         hideLoading();
     }
@@ -139,107 +102,72 @@ async function handleLogin(event) {
     showLoading();
     const email = document.getElementById('loginUsername').value;
     const password = document.getElementById('loginPassword').value;
-    try {
-    const { data, error } = await supabase.auth.signInWithPassword({
-        email: email,
-        password,
-    });
-    if (error) throw error;
 
-    // ADD THESE LINES FOR DEVELOPMENT
-    // This manually loads your data because the auto-load is off
-    if (data.user) {
-        await loadUserProfile(data.user);
-    }
+    try {
+        const data = await apiRequest('/auth/login', 'POST', { email, password });
+        localStorage.setItem('authToken', data.token);
+        await loadUserProfile(data.token);
     } catch (error) {
-        showToast('Invalid login credentials.', 'error');
+        // Error toast is handled by apiRequest
     } finally {
         hideLoading();
     }
 }
 
 async function logout() {
-    showLoading();
-    await supabase.auth.signOut();
-    hideLoading();
-}
-
-function togglePasswordVisibility(inputId, iconId) {
-    const passwordInput = document.getElementById(inputId);
-    const icon = document.getElementById(iconId);
-    if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        icon.classList.replace('fa-eye', 'fa-eye-slash');
-    } else {
-        passwordInput.type = 'password';
-        icon.classList.replace('fa-eye-slash', 'fa-eye');
-    }
-}
-
-function showForgotPasswordModal() {
-    authModal.style.display = 'none';
-    document.getElementById('forgotPasswordModal').style.display = 'flex';
-}
-
-function hideForgotPasswordModal() {
-    document.getElementById('forgotPasswordModal').style.display = 'none';
+    localStorage.removeItem('authToken');
+    currentUserProfile = null;
+    updateUIForGuest();
     authModal.style.display = 'flex';
+    showPage('dashboard');
+    window.location.hash = '';
 }
 
-async function handleForgotPassword(event) {
-    event.preventDefault();
-    showLoading();
-    const email = document.getElementById('resetEmail').value;
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.href.split('#')[0],
-    });
-    hideLoading();
-    if (error) {
-        showToast(error.message, 'error');
-    } else {
-        showToast('Password reset link sent! Check your email.', 'success');
+async function loadUserProfile(token) {
+    if (!token) return;
+    showLoading('Loading your profile...');
+    try {
+        const data = await apiRequest('/user/profile', 'GET');
+        currentUserProfile = data.user;
+        await updateUI(data.history);
+        authModal.style.display = 'none';
         document.getElementById('forgotPasswordModal').style.display = 'none';
+        showPage('dashboard');
+    } catch (error) {
+        logout(); // If token is invalid or expired, log out
+    } finally {
+        hideLoading();
     }
 }
 
-async function handlePasswordReset(event) {
+// --- PASSWORD RESET (Placeholder - requires more backend logic) ---
+function handleForgotPassword(event) {
     event.preventDefault();
-    showLoading();
-    const newPassword = document.getElementById('newPassword').value;
-    if (newPassword.length < 6) {
-        showToast('Password must be at least 6 characters long.', 'warning');
-        hideLoading();
-        return;
-    }
-    const { error } = await supabase.auth.updateUser({ password: newPassword });
-    hideLoading();
-    if (error) {
-        showToast(error.message, 'error');
-    } else {
-        showToast('Password updated successfully! Please log in.', 'success');
-        window.location.hash = '';
-        showPage('dashboard');
-        authModal.style.display = 'flex';
-    }
+    showToast('Password reset is not yet implemented in this backend.', 'info');
+}
+function handlePasswordReset(event) {
+    event.preventDefault();
+    showToast('Password reset is not yet implemented in this backend.', 'info');
 }
 
 // --- UI Update & Rendering ---
-
-async function updateUI() {
+async function updateUI(history = null) {
     if (!currentUserProfile) return updateUIForGuest();
+
+    if (!history) {
+        try {
+            const data = await apiRequest('/user/profile', 'GET');
+            currentUserProfile = data.user;
+            history = data.history;
+        } catch (err) {
+            return;
+        }
+    }
     
     document.getElementById('userName').innerText = currentUserProfile.username;
     document.getElementById('userPoints').innerText = currentUserProfile.points;
     document.getElementById('totalPoints').innerText = currentUserProfile.points;
 
-    const { data: history, error } = await supabase
-        .from('points_history')
-        .select('*')
-        .eq('user_id', currentUserProfile.id)
-        .order('created_at', { ascending: false });
-
-    if (error) return console.error("Error fetching history:", error.message);
-    
     document.getElementById('totalScans').innerText = history.filter(item => item.action === 'qr_scan').length;
     document.getElementById('totalRedeemed').innerText = history.filter(item => item.action === 'coupon_redeem').length;
 
@@ -247,6 +175,52 @@ async function updateUI() {
     renderPointsHistory(history);
 }
 
+// --- CORE FEATURES (MODIFIED) ---
+async function handleQRScan(decodedText) {
+    if (!isScannerActive || !currentUserProfile) return;
+    await stopScanner();
+    showLoading();
+    
+    try {
+        const data = await apiRequest('/user/scan', 'POST', { qrCode: decodedText });
+        currentUserProfile.points = data.points;
+        showToast(data.message, "success");
+        await updateUI();
+    } catch (error) {
+        // Error toast handled by apiRequest
+    } finally {
+        hideLoading();
+    }
+}
+
+async function redeemCoupon(couponId, pointsRequired) {
+    if (!currentUserProfile || currentUserProfile.points < pointsRequired) return;
+    showLoading();
+    const coupon = defaultCoupons.find(c => c.id === couponId);
+    
+    try {
+        const data = await apiRequest('/user/redeem', 'POST', {
+            couponId,
+            pointsRequired,
+            couponName: coupon.name,
+        });
+
+        currentUserProfile.points = data.points;
+        await updateUI();
+        loadCoupons();
+
+        document.getElementById('redeemedCouponName').textContent = coupon.name;
+        document.getElementById('redeemCodeDisplay').textContent = generateRedeemCode();
+        document.getElementById('redeemCodeModal').style.display = 'flex';
+        startRedeemTimer();
+    } catch (error) {
+        // Error toast handled by apiRequest
+    } finally {
+        hideLoading();
+    }
+}
+
+// --- UNMODIFIED HELPER FUNCTIONS (No changes needed below this line) ---
 function updateUIForGuest() {
     document.getElementById('userName').innerText = 'Guest';
     ['userPoints', 'totalPoints', 'totalScans', 'totalRedeemed'].forEach(id => document.getElementById(id).innerText = '0');
@@ -323,81 +297,6 @@ function loadCoupons() {
     });
 }
 
-// --- Core Features ---
-
-async function redeemCoupon(couponId, pointsRequired) {
-    if (!currentUserProfile || currentUserProfile.points < pointsRequired) return;
-    showLoading();
-    try {
-        const coupon = defaultCoupons.find(c => c.id === couponId);
-        const newPoints = currentUserProfile.points - pointsRequired;
-
-        const { error: profileError } = await supabase.from('profiles').update({ points: newPoints }).eq('id', currentUserProfile.id);
-        if (profileError) throw profileError;
-
-        const { error: historyError } = await supabase.from('points_history').insert({
-            user_id: currentUserProfile.id,
-            action: 'coupon_redeem',
-            points_change: -pointsRequired,
-            description: `Redeemed: ${coupon.name}`
-        });
-        if (historyError) throw historyError;
-        
-        currentUserProfile.points = newPoints;
-        await updateUI();
-        loadCoupons();
-        
-        document.getElementById('redeemedCouponName').textContent = coupon.name;
-        document.getElementById('redeemCodeDisplay').textContent = generateRedeemCode();
-        document.getElementById('redeemCodeModal').style.display = 'flex';
-        startRedeemTimer();
-    } catch (error) {
-        console.error("Error redeeming coupon:", error.message);
-        showToast("Could not redeem coupon. Please try again.", "error");
-    } finally {
-        hideLoading();
-    }
-}
-
-async function handleQRScan(decodedText) {
-    if (!isScannerActive || !currentUserProfile) return;
-    await stopScanner();
-    showLoading();
-    try {
-        if (decodedText !== EXPECTED_FRAME_QR_CONTENT) {
-            return showToast("Invalid QR Code. Scan the one on the dustbin.", "error");
-        }
-
-        const { data: existingScan } = await supabase.from('qr_scans').select('last_scanned_at').eq('user_id', currentUserProfile.id).eq('qr_id', decodedText).single();
-        
-        if (existingScan) {
-            const timeSinceLastScan = new Date().getTime() - new Date(existingScan.last_scanned_at).getTime();
-            if (timeSinceLastScan < QR_SCAN_COOLDOWN_MS) {
-                const remainingMinutes = Math.ceil((QR_SCAN_COOLDOWN_MS - timeSinceLastScan) / 60000);
-                return showToast(`Please wait ${remainingMinutes} more minute(s) to scan again.`, "warning");
-            }
-        }
-        
-        const pointsEarned = 10;
-        const newPoints = currentUserProfile.points + pointsEarned;
-
-        await supabase.from('profiles').update({ points: newPoints }).eq('id', currentUserProfile.id);
-        await supabase.from('qr_scans').upsert({ user_id: currentUserProfile.id, qr_id: decodedText, last_scanned_at: new Date().toISOString() }, { onConflict: 'user_id, qr_id' });
-        await supabase.from('points_history').insert({ user_id: currentUserProfile.id, action: 'qr_scan', points_change: pointsEarned, description: `Scanned Dust Bin QR` });
-        
-        currentUserProfile.points = newPoints;
-        showToast(`+${pointsEarned} points added!`, "success");
-        await updateUI();
-    } catch (error) {
-        console.error("Error processing QR scan:", error.message);
-        showToast("An error occurred during the scan.", "error");
-    } finally {
-        hideLoading();
-    }
-}
-
-// --- QR Scanner & Redeem Code Helpers ---
-
 async function startScanner() {
     if (!currentUserProfile || isScannerActive) return;
     isScannerActive = true;
@@ -468,8 +367,27 @@ function hideRedeemCodeModal() {
     document.getElementById('redeemCodeModal').style.display = 'none';
 }
 
+function togglePasswordVisibility(inputId, iconId) {
+    const passwordInput = document.getElementById(inputId);
+    const icon = document.getElementById(iconId);
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+    }
+}
 
-// --- Generic Helpers & Utilities ---
+function showForgotPasswordModal() {
+    authModal.style.display = 'none';
+    document.getElementById('forgotPasswordModal').style.display = 'flex';
+}
+
+function hideForgotPasswordModal() {
+    document.getElementById('forgotPasswordModal').style.display = 'none';
+    authModal.style.display = 'flex';
+}
 
 function showPage(pageId) {
     document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
@@ -494,7 +412,9 @@ function showLoading(message = 'Loading...') {
     document.querySelector('#loadingOverlay p').textContent = message;
     loadingOverlay.classList.add('active');
 }
+
 function hideLoading() { loadingOverlay.classList.remove('active'); }
+
 function toggleNav() { document.getElementById('navLinks').classList.toggle('active'); }
 
 function showToast(message, type = 'info') {
