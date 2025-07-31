@@ -13,7 +13,7 @@ module.exports = function(req, res, next) {
     // Verify token
     try {
         // This line is now fixed to use the hardcoded secret key
-        const decoded = jwt.verify(token, 'a_very_secret_and_long_string_for_your_jwt');
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         
         req.user = decoded.user;
         next();

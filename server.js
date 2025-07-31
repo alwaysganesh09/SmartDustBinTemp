@@ -24,11 +24,11 @@ app.use(express.json()); // Parse JSON bodies
 // --- Database Connection ---
 
 // Use the long, standard string and your NEW password here
-const connectionString = 'mongodb://neelig552:Ganesh9391864598@ac-gokgxlo-shard-00-00.unewaxi.mongodb.net:27017,ac-gokgxlo-shard-00-01.unewaxi.mongodb.net:27017,ac-gokgxlo-shard-00-02.unewaxi.mongodb.net:27017/?ssl=true&replicaSet=atlas-2f9dp3-shard-0&authSource=admin&retryWrites=true&w=majority&appName=Cluster0';
-
-mongoose.connect(connectionString)
-  .then(() => console.log('MongoDB connected successfully!'))
-  .catch(err => console.error('MongoDB connection error:', err));
+crequire('dotenv').config(); // Make sure this line is at the top
+//...
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => console.log('MongoDB connected successfully!'))
+    //...
 
 // --- API Routes ---
 app.use('/api/auth', require('./routes/auth'));

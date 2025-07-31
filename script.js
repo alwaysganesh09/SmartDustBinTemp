@@ -1,5 +1,6 @@
 // --- Global Variables ---
-const API_URL = 'http://localhost:5000/api'; // Your backend URL
+// Use your real Vercel URL here
+const API_URL = 'https://smartdustbin-ten.vercel.app/api'; // // Your backend URL
 let currentUserProfile = null;
 let html5QrCodeScanner = null;
 let isScannerActive = false;
@@ -43,7 +44,8 @@ async function checkLoginState() {
         await loadUserProfile(token);
     } else {
         updateUIForGuest();
-        authModal.style.display = 'flex';
+        // Add this line to show the modal only if no token is found
+        document.getElementById('authModal').style.display = 'flex';
     }
 }
 
@@ -406,6 +408,8 @@ function switchTab(tab) {
     document.querySelectorAll('.auth-form').forEach(form => form.classList.remove('active'));
     document.querySelector(`.tab-btn[onclick="switchTab('${tab}')"]`).classList.add('active');
     document.getElementById(`${tab}Form`).classList.add('active');
+    document.getElementById('loginForm').reset();
+    document.getElementById('registerForm').reset();    
 }
 
 function showLoading(message = 'Loading...') {
@@ -430,6 +434,7 @@ function showToast(message, type = 'info') {
     toastContainer.appendChild(toast);
     setTimeout(() => toast.remove(), 3000);
 }
+
 
 
 // --- Initial Load ---
