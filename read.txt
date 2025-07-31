@@ -1,0 +1,1 @@
+unlock the login etc uncomment the line "68" in script.js
