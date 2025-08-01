@@ -1,6 +1,5 @@
 // --- Global Variables ---
-// Use your real Vercel URL here
-const API_URL = 'https://smartdustbin-ten.vercel.app/api'; // // Your backend URL
+const API_URL = 'https://smartdustbin-ten.vercel.app/api';
 let currentUserProfile = null;
 let html5QrCodeScanner = null;
 let isScannerActive = false;
@@ -27,7 +26,7 @@ const registerForm = document.getElementById('registerForm');
 async function initApp() {
     console.log("Smart Dust Bin App Initializing with Node/MongoDB backend...");
     setupEventListeners();
-    await checkLoginState(); // Check if a token exists in localStorage
+    await checkLoginState();
     showPage('dashboard');
 }
 
@@ -44,35 +43,33 @@ async function checkLoginState() {
         await loadUserProfile(token);
     } else {
         updateUIForGuest();
-        // Add this line to show the modal only if no token is found
         document.getElementById('authModal').style.display = 'flex';
     }
 }
 
-// --- NEW API HELPER ---
+// --- API Helper ---
 async function apiRequest(endpoint, method = 'GET', body = null) {
     const headers = { 'Content-Type': 'application/json' };
     const token = localStorage.getItem('authToken');
     if (token) {
         headers['Authorization'] = `Bearer ${token}`;
     }
-
     const config = {
         method,
         headers,
     };
-
     if (body) {
         config.body = JSON.stringify(body);
     }
-
     try {
         const response = await fetch(`${API_URL}${endpoint}`, config);
-        const data = await response.json();
         if (!response.ok) {
-            throw new Error(data.message || 'Something went wrong');
+            const errorData = await response.json().catch(() => ({ message: response.statusText }));
+            throw new Error(errorData.message || 'Something went wrong');
         }
-        return data;
+        // Handle cases where the response might be empty
+        const text = await response.text();
+        return text ? JSON.parse(text) : {};
     } catch (error) {
         console.error(`API Error on ${endpoint}:`, error);
         showToast(error.message || 'An API error occurred', 'error');
@@ -80,14 +77,14 @@ async function apiRequest(endpoint, method = 'GET', body = null) {
     }
 }
 
-// --- MODIFIED AUTH FUNCTIONS ---
+
+// --- Auth Functions ---
 async function handleRegister(event) {
     event.preventDefault();
     showLoading();
     const username = document.getElementById('registerUsername').value;
     const email = document.getElementById('registerEmail').value;
     const password = document.getElementById('registerPassword').value;
-
     try {
         const data = await apiRequest('/auth/register', 'POST', { username, email, password });
         showToast(data.message, 'success');
@@ -104,7 +101,6 @@ async function handleLogin(event) {
     showLoading();
     const email = document.getElementById('loginUsername').value;
     const password = document.getElementById('loginPassword').value;
-
     try {
         const data = await apiRequest('/auth/login', 'POST', { email, password });
         localStorage.setItem('authToken', data.token);
@@ -136,13 +132,12 @@ async function loadUserProfile(token) {
         document.getElementById('forgotPasswordModal').style.display = 'none';
         showPage('dashboard');
     } catch (error) {
-        logout(); // If token is invalid or expired, log out
+        logout();
     } finally {
         hideLoading();
     }
 }
 
-// --- PASSWORD RESET (Placeholder - requires more backend logic) ---
 function handleForgotPassword(event) {
     event.preventDefault();
     showToast('Password reset is not yet implemented in this backend.', 'info');
@@ -155,7 +150,6 @@ function handlePasswordReset(event) {
 // --- UI Update & Rendering ---
 async function updateUI(history = null) {
     if (!currentUserProfile) return updateUIForGuest();
-
     if (!history) {
         try {
             const data = await apiRequest('/user/profile', 'GET');
@@ -165,24 +159,20 @@ async function updateUI(history = null) {
             return;
         }
     }
-    
     document.getElementById('userName').innerText = currentUserProfile.username;
     document.getElementById('userPoints').innerText = currentUserProfile.points;
     document.getElementById('totalPoints').innerText = currentUserProfile.points;
-
     document.getElementById('totalScans').innerText = history.filter(item => item.action === 'qr_scan').length;
     document.getElementById('totalRedeemed').innerText = history.filter(item => item.action === 'coupon_redeem').length;
-
     renderRecentActivity(history);
     renderPointsHistory(history);
 }
 
-// --- CORE FEATURES (MODIFIED) ---
+// --- Core Features ---
 async function handleQRScan(decodedText) {
     if (!isScannerActive || !currentUserProfile) return;
     await stopScanner();
     showLoading();
-    
     try {
         const data = await apiRequest('/user/scan', 'POST', { qrCode: decodedText });
         currentUserProfile.points = data.points;
@@ -199,18 +189,15 @@ async function redeemCoupon(couponId, pointsRequired) {
     if (!currentUserProfile || currentUserProfile.points < pointsRequired) return;
     showLoading();
     const coupon = defaultCoupons.find(c => c.id === couponId);
-    
     try {
         const data = await apiRequest('/user/redeem', 'POST', {
             couponId,
             pointsRequired,
             couponName: coupon.name,
         });
-
         currentUserProfile.points = data.points;
         await updateUI();
         loadCoupons();
-
         document.getElementById('redeemedCouponName').textContent = coupon.name;
         document.getElementById('redeemCodeDisplay').textContent = generateRedeemCode();
         document.getElementById('redeemCodeModal').style.display = 'flex';
@@ -222,7 +209,7 @@ async function redeemCoupon(couponId, pointsRequired) {
     }
 }
 
-// --- UNMODIFIED HELPER FUNCTIONS (No changes needed below this line) ---
+// --- Unmodified Helper Functions ---
 function updateUIForGuest() {
     document.getElementById('userName').innerText = 'Guest';
     ['userPoints', 'totalPoints', 'totalScans', 'totalRedeemed'].forEach(id => document.getElementById(id).innerText = '0');
@@ -242,15 +229,7 @@ function renderRecentActivity(historyData) {
         const pointsClass = item.points_change >= 0 ? 'positive' : 'negative';
         const iconClass = item.action.replace('_', '-');
         const icon = item.points_change >= 0 ? 'fa-plus' : 'fa-gift';
-        recentActivityDiv.innerHTML += `
-            <div class="activity-item">
-                <div class="activity-icon ${iconClass}"><i class="fas ${icon}"></i></div>
-                <div class="activity-details">
-                    <div class="activity-description">${item.description}</div>
-                    <div class="activity-time">${new Date(item.created_at).toLocaleString()}</div>
-                </div>
-                <div class="activity-points ${pointsClass}">${item.points_change > 0 ? '+' : ''}${item.points_change}</div>
-            </div>`;
+        recentActivityDiv.innerHTML += `<div class="activity-item"><div class="activity-icon ${iconClass}"><i class="fas ${icon}"></i></div><div class="activity-details"><div class="activity-description">${item.description}</div><div class="activity-time">${new Date(item.created_at).toLocaleString()}</div></div><div class="activity-points ${pointsClass}">${item.points_change > 0 ? '+' : ''}${item.points_change}</div></div>`;
     });
 }
 
@@ -265,15 +244,7 @@ function renderPointsHistory(historyData) {
         const pointsClass = item.points_change >= 0 ? 'positive' : 'negative';
         const iconClass = item.action.replace('_', '-');
         const icon = item.points_change >= 0 ? 'fa-plus' : 'fa-gift';
-        pointsHistoryDiv.innerHTML += `
-            <div class="history-item">
-                <div class="history-icon ${iconClass}"><i class="fas ${icon}"></i></div>
-                <div class="history-details">
-                    <div class="history-description">${item.description}</div>
-                    <div class="history-time">${new Date(item.created_at).toLocaleString()}</div>
-                </div>
-                <div class="history-points ${pointsClass}">${item.points_change > 0 ? '+' : ''}${item.points_change}</div>
-            </div>`;
+        pointsHistoryDiv.innerHTML += `<div class="history-item"><div class="history-icon ${iconClass}"><i class="fas ${icon}"></i></div><div class="history-details"><div class="history-description">${item.description}</div><div class="history-time">${new Date(item.created_at).toLocaleString()}</div></div><div class="history-points ${pointsClass}">${item.points_change > 0 ? '+' : ''}${item.points_change}</div></div>`;
     });
 }
 
@@ -283,19 +254,7 @@ function loadCoupons() {
     defaultCoupons.forEach(coupon => {
         const canRedeem = currentUserProfile && currentUserProfile.points >= coupon.points;
         let buttonText = canRedeem ? 'Redeem Now' : (currentUserProfile ? 'Insufficient Points' : 'Login to Redeem');
-        couponsGrid.innerHTML += `
-            <div class="card coupon-card">
-                <div class="coupon-header">
-                    <div class="coupon-name">${coupon.name}</div>
-                    <div class="coupon-points"><i class="fas fa-coins"></i> ${coupon.points} Points</div>
-                </div>
-                <div class="coupon-body">
-                    <p class="coupon-description">Redeem for exclusive eco-friendly benefits!</p>
-                    <button class="coupon-btn" onclick="redeemCoupon('${coupon.id}', ${coupon.points})" ${!canRedeem ? 'disabled' : ''}>
-                        ${buttonText}
-                    </button>
-                </div>
-            </div>`;
+        couponsGrid.innerHTML += `<div class="card coupon-card"><div class="coupon-header"><div class="coupon-name">${coupon.name}</div><div class="coupon-points"><i class="fas fa-coins"></i> ${coupon.points} Points</div></div><div class="coupon-body"><p class="coupon-description">Redeem for exclusive eco-friendly benefits!</p><button class="coupon-btn" onclick="redeemCoupon('${coupon.id}', ${coupon.points})" ${!canRedeem ? 'disabled' : ''}>${buttonText}</button></div></div>`;
     });
 }
 
@@ -306,14 +265,9 @@ async function startScanner() {
     document.getElementById('stopScanBtn').style.display = 'block';
     document.getElementById('qr-reader').innerHTML = '';
     document.getElementById('qr-reader').style.display = 'block';
-    
     html5QrCodeScanner = new Html5Qrcode("qr-reader");
     try {
-        await html5QrCodeScanner.start(
-            { facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } },
-            (decodedText) => { if (isScannerActive) handleQRScan(decodedText); },
-            () => {}
-        );
+        await html5QrCodeScanner.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } }, (decodedText) => { if (isScannerActive) handleQRScan(decodedText); }, () => {});
     } catch (err) {
         isScannerActive = false;
         document.getElementById('startScanBtn').style.display = 'block';
@@ -395,7 +349,6 @@ function showPage(pageId) {
     document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
     document.getElementById(`${pageId}Page`)?.classList.add('active');
     document.getElementById('navLinks').classList.remove('active');
-
     if (pageId !== 'scan' && isScannerActive) stopScanner();
     if (currentUserProfile) {
         if (pageId === 'dashboard' || pageId === 'history') updateUI();
@@ -409,7 +362,7 @@ function switchTab(tab) {
     document.querySelector(`.tab-btn[onclick="switchTab('${tab}')"]`).classList.add('active');
     document.getElementById(`${tab}Form`).classList.add('active');
     document.getElementById('loginForm').reset();
-    document.getElementById('registerForm').reset();    
+    document.getElementById('registerForm').reset();
 }
 
 function showLoading(message = 'Loading...') {
@@ -417,25 +370,22 @@ function showLoading(message = 'Loading...') {
     loadingOverlay.classList.add('active');
 }
 
-function hideLoading() { loadingOverlay.classList.remove('active'); }
+function hideLoading() {
+    loadingOverlay.classList.remove('active');
+}
 
-function toggleNav() { document.getElementById('navLinks').classList.toggle('active'); }
+function toggleNav() {
+    document.getElementById('navLinks').classList.toggle('active');
+}
 
 function showToast(message, type = 'info') {
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
-    const iconMap = {
-        success: 'fa-check-circle',
-        error: 'fa-times-circle',
-        warning: 'fa-exclamation-triangle',
-        info: 'fa-info-circle'
-    };
+    const iconMap = { success: 'fa-check-circle', error: 'fa-times-circle', warning: 'fa-exclamation-triangle', info: 'fa-info-circle' };
     toast.innerHTML = `<i class="fas ${iconMap[type]} toast-icon"></i><span>${message}</span>`;
     toastContainer.appendChild(toast);
     setTimeout(() => toast.remove(), 3000);
 }
-
-
 
 // --- Initial Load ---
 document.addEventListener('DOMContentLoaded', initApp);
