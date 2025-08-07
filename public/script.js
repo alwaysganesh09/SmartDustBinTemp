@@ -21,11 +21,14 @@ const loadingOverlay = document.getElementById('loadingOverlay');
 const toastContainer = document.getElementById('toastContainer');
 const loginForm = document.getElementById('loginForm');
 const registerForm = document.getElementById('registerForm');
+const forgotPasswordModal = document.getElementById('forgotPasswordModal');
+const passwordResetModal = document.getElementById('passwordResetModal'); // Ensure you have a modal with this ID
 
 // --- Core App Initialization ---
 async function initApp() {
     console.log("Smart Dust Bin App Initializing with Node/MongoDB backend...");
     setupEventListeners();
+    handlePasswordResetRouting(); // Handle incoming password reset links
     await checkLoginState();
     showPage('dashboard');
 }
@@ -37,13 +40,28 @@ function setupEventListeners() {
     document.getElementById('passwordResetForm')?.addEventListener('submit', handlePasswordReset);
 }
 
+// NEW: This function checks if the user arrived from a reset link
+function handlePasswordResetRouting() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    // If a reset token is in the URL, show the reset password modal
+    if (token) {
+        authModal.style.display = 'none';
+        forgotPasswordModal.style.display = 'none';
+        passwordResetModal.style.display = 'flex';
+        // Clear the token from URL to avoid it being bookmarked
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+}
+
 async function checkLoginState() {
     const token = localStorage.getItem('authToken');
     if (token) {
         await loadUserProfile(token);
-    } else {
+    } else if (!passwordResetModal || passwordResetModal.style.display !== 'flex') {
+        // Only show login modal if not in the middle of a password reset
         updateUIForGuest();
-        document.getElementById('authModal').style.display = 'flex';
+        authModal.style.display = 'flex';
     }
 }
 
@@ -67,7 +85,6 @@ async function apiRequest(endpoint, method = 'GET', body = null) {
             const errorData = await response.json().catch(() => ({ message: response.statusText }));
             throw new Error(errorData.message || 'Something went wrong');
         }
-        // Handle cases where the response might be empty
         const text = await response.text();
         return text ? JSON.parse(text) : {};
     } catch (error) {
@@ -129,7 +146,8 @@ async function loadUserProfile(token) {
         currentUserProfile = data.user;
         await updateUI(data.history);
         authModal.style.display = 'none';
-        document.getElementById('forgotPasswordModal').style.display = 'none';
+        forgotPasswordModal.style.display = 'none';
+        passwordResetModal.style.display = 'none';
         showPage('dashboard');
     } catch (error) {
         logout();
@@ -138,16 +156,66 @@ async function loadUserProfile(token) {
     }
 }
 
-function handleForgotPassword(event) {
+// --- MODIFIED: Forgot Password Implementation ---
+async function handleForgotPassword(event) {
     event.preventDefault();
-    showToast('Password reset is not yet implemented in this backend.', 'info');
-}
-function handlePasswordReset(event) {
-    event.preventDefault();
-    showToast('Password reset is not yet implemented in this backend.', 'info');
+    showLoading('Sending reset link...');
+    const email = document.getElementById('forgotPasswordEmail').value; // Ensure input has this ID
+    try {
+        // This calls your new backend endpoint
+        const data = await apiRequest('/auth/forgot-password', 'POST', { email });
+        showToast(data.message, 'success'); // Success message from your API
+        hideForgotPasswordModal();
+    } catch (error) {
+        // Error (e.g., "Email not found") is handled by apiRequest
+    } finally {
+        hideLoading();
+    }
 }
 
-// --- UI Update & Rendering ---
+// --- MODIFIED: Password Reset Implementation ---
+async function handlePasswordReset(event) {
+    event.preventDefault();
+    showLoading('Resetting password...');
+
+    // 1. Get token from URL (handled by handlePasswordResetRouting on load)
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+
+    // 2. Get new passwords from the form
+    const password = document.getElementById('resetPassword').value; // Ensure input has this ID
+    const confirmPassword = document.getElementById('resetConfirmPassword').value; // Ensure input has this ID
+
+    if (password.length < 6) {
+        showToast('Password must be at least 6 characters.', 'error');
+        hideLoading();
+        return;
+    }
+
+    if (password !== confirmPassword) {
+        showToast('Passwords do not match.', 'error');
+        hideLoading();
+        return;
+    }
+
+    try {
+        // 3. Call the new backend endpoint with token and new password
+        const data = await apiRequest('/auth/reset-password', 'POST', { token, password });
+        showToast(data.message, 'success'); // e.g., "Password reset successfully!"
+
+        // 4. Hide reset modal and show the login modal
+        passwordResetModal.style.display = 'none';
+        authModal.style.display = 'flex';
+        switchTab('login');
+
+    } catch (error) {
+        // Error (e.g., "Invalid or expired token") is handled by apiRequest
+    } finally {
+        hideLoading();
+    }
+}
+
+// --- UI Update & Rendering (Unchanged) ---
 async function updateUI(history = null) {
     if (!currentUserProfile) return updateUIForGuest();
     if (!history) {
@@ -168,7 +236,7 @@ async function updateUI(history = null) {
     renderPointsHistory(history);
 }
 
-// --- Core Features ---
+// --- Core Features (Unchanged) ---
 async function handleQRScan(decodedText) {
     if (!isScannerActive || !currentUserProfile) return;
     await stopScanner();
@@ -209,7 +277,7 @@ async function redeemCoupon(couponId, pointsRequired) {
     }
 }
 
-// --- Unmodified Helper Functions ---
+// --- Helper Functions (Mostly Unchanged) ---
 function updateUIForGuest() {
     document.getElementById('userName').innerText = 'Guest';
     ['userPoints', 'totalPoints', 'totalScans', 'totalRedeemed'].forEach(id => document.getElementById(id).innerText = '0');
@@ -267,7 +335,7 @@ async function startScanner() {
     document.getElementById('qr-reader').style.display = 'block';
     html5QrCodeScanner = new Html5Qrcode("qr-reader");
     try {
-        await html5QrCodeScanner.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } }, (decodedText) => { if (isScannerActive) handleQRScan(decodedText); }, () => {});
+        await html5QrCodeScanner.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } }, (decodedText) => { if (isScannerActive) handleQRScan(decodedText); }, () => { });
     } catch (err) {
         isScannerActive = false;
         document.getElementById('startScanBtn').style.display = 'block';
@@ -337,11 +405,11 @@ function togglePasswordVisibility(inputId, iconId) {
 
 function showForgotPasswordModal() {
     authModal.style.display = 'none';
-    document.getElementById('forgotPasswordModal').style.display = 'flex';
+    forgotPasswordModal.style.display = 'flex';
 }
 
 function hideForgotPasswordModal() {
-    document.getElementById('forgotPasswordModal').style.display = 'none';
+    forgotPasswordModal.style.display = 'none';
     authModal.style.display = 'flex';
 }
 
