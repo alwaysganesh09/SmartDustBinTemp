@@ -141,19 +141,26 @@
                 </div>
             </div>
         </div>
+        
+        <div id="confirmModal" class="modal" style="display: none;">
+            <div class="modal-content confirm-modal-content">
+                <h3 id="confirmTitle">Confirm Action</h3>
+                <p id="confirmMessage">Are you sure you want to proceed?</p>
+                <div class="confirm-buttons">
+                    <button id="confirmBtnYes" class="auth-btn">Yes, Redeem</button>
+                    <button id="confirmBtnNo" class="auth-btn secondary">Cancel</button>
+                </div>
+            </div>
+        </div>
 
         <main class="main-content">
-            <div id="dashboardPage" class="page active">
+            <div id="dashboardPage" class="page">
                 <div class="page-header">
                     <h1>Dashboard</h1>
-                    <div class="user-info">
-                        <div class="points-display">
-                            <i class="fas fa-coins"></i>
-                            <span id="userPoints">0</span> Points
-                        </div>
-                        <div class="user-name">
-                            Welcome, <span id="userName">User</span>!
-                        </div>
+                    <h2 class="welcome-message">Welcome, <span id="userName">User</span>!</h2>
+                    <div class="points-display">
+                        <i class="fas fa-coins"></i>
+                        <span id="userPoints">0</span> Points
                     </div>
                 </div>
 
@@ -295,24 +302,13 @@
 
         <div id="toastContainer" class="toast-container"></div>
     </div>
-    <div id="confirmModal" class="modal" style="display: none;">
-    <div class="modal-content confirm-modal-content">
-        <h3 id="confirmTitle">Confirm Action</h3>
-        <p id="confirmMessage">Are you sure you want to proceed?</p>
-        <div class="confirm-buttons">
-            <button id="confirmBtnYes" class="auth-btn">Yes, Redeem</button>
-            <button id="confirmBtnNo" class="auth-btn secondary">Cancel</button>
-        </div>
-    </div>
-</div>
     <footer style="background-color:#715DBB; color: #000000; text-align: center; padding: 1rem 0; font-size: 0.9rem; border-top: 1px solid #2d3748; margin-top: auto;">
         <div style="max-width: 1200px; margin: 0 auto; padding: 0 1.5rem;">
             &copy; 2025 Smart Dust Bin. All rights reserved. Developed by Team TITANS.
         </div>
     </footer>
-     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode.js/1.0.0/qrcode.min.js"></script>
-
     <script src="script.js"></script>
 </body>
 </html>
