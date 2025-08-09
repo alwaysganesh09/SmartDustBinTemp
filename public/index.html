@@ -6,8 +6,6 @@
     <title>Smart Dust Bin - Eco Points System</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode.js/1.0.0/qrcode.min.js"></script> 
 </head>
 <body>
     <div id="app">
@@ -19,16 +17,16 @@
                 </div>
                 <div class="nav-menu" id="navMenu">
                     <div class="nav-links" id="navLinks">
-                        <a href="#" onclick="showPage('dashboard')" class="nav-link">
+                        <a href="#dashboard" class="nav-link">
                             <i class="fas fa-tachometer-alt"></i> Dashboard
                         </a>
-                        <a href="#" onclick="showPage('scan')" class="nav-link">
+                        <a href="#scan" class="nav-link">
                             <i class="fas fa-qrcode"></i> Scan QR
                         </a>
-                        <a href="#" onclick="showPage('coupons')" class="nav-link">
+                        <a href="#coupons" class="nav-link">
                             <i class="fas fa-gift"></i> Coupons
                         </a>
-                        <a href="#" onclick="showPage('history')" class="nav-link">
+                        <a href="#history" class="nav-link">
                             <i class="fas fa-history"></i> History
                         </a>
                         <a href="#" onclick="logout()" class="nav-link logout-btn">
@@ -185,11 +183,11 @@
                             <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
                         </div>
                         <div class="action-buttons">
-                            <button class="action-btn" onclick="showPage('scan')">
+                            <button class="action-btn" onclick="window.location.hash = 'scan'">
                                 <i class="fas fa-qrcode"></i>
                                 <span>Scan QR Code</span>
                             </button>
-                            <button class="action-btn" onclick="showPage('coupons')">
+                            <button class="action-btn" onclick="window.location.hash = 'coupons'">
                                 <i class="fas fa-gift"></i>
                                 <span>View Coupons</span>
                             </button>
@@ -286,7 +284,6 @@
                     </form>
                 </div>
             </div>
-
         </main>
 
         <div id="loadingOverlay" class="loading-overlay">
@@ -306,6 +303,6 @@
      <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode.js/1.0.0/qrcode.min.js"></script>
 
-    <script type="module" src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

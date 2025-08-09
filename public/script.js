@@ -7,12 +7,12 @@ let redeemTimerInterval = null;
 const EXPECTED_FRAME_QR_CONTENT = 'https://qrco.de/bgBWbc';
 
 const defaultCoupons = [
-    { id: 'coupon1', name: '10% Off at Green Mart', points: 100 },
-    { id: 'coupon2', name: 'Free Coffee at EcoCafe', points: 50 },
-    { id: 'coupon3', name: '20% Off Recycled Clothing', points: 200 },
-    { id: 'coupon4', name: 'Free Plant Seedling', points: 75 },
-    { id: 'coupon5', name: '15% Off Solar Gadgets', points: 150 },
-    { id: 'coupon6', name: 'Free Eco-Bag', points: 30 },
+    // { id: 'coupon1', name: '10% Off at Green Mart', points: 100 },
+    // { id: 'coupon2', name: 'Free Coffee at EcoCafe', points: 50 },
+    // { id: 'coupon3', name: '20% Off Recycled Clothing', points: 200 },
+    // { id: 'coupon4', name: 'Free Plant Seedling', points: 75 },
+    // { id: 'coupon5', name: '15% Off Solar Gadgets', points: 150 },
+    // { id: 'coupon6', name: 'Free Eco-Bag', points: 30 },
 ];
 
 // --- UI Element References ---
@@ -27,7 +27,9 @@ async function initApp() {
     console.log("Smart Dust Bin App Initializing with Node/MongoDB backend...");
     setupEventListeners();
     await checkLoginState();
-    showPage('dashboard');
+    // Set up the router to handle navigation
+    window.addEventListener('hashchange', router);
+    router(); // Call router on initial page load
 }
 
 function setupEventListeners() {
@@ -45,6 +47,13 @@ async function checkLoginState() {
         updateUIForGuest();
         document.getElementById('authModal').style.display = 'flex';
     }
+}
+
+// --- Router to handle navigation based on URL hash ---
+function router() {
+    // Get the page ID from the hash, or default to 'dashboard'
+    const pageId = window.location.hash.substring(1) || 'dashboard';
+    showPage(pageId);
 }
 
 // --- API Helper ---
@@ -67,7 +76,6 @@ async function apiRequest(endpoint, method = 'GET', body = null) {
             const errorData = await response.json().catch(() => ({ message: response.statusText }));
             throw new Error(errorData.message || 'Something went wrong');
         }
-        // Handle cases where the response might be empty
         const text = await response.text();
         return text ? JSON.parse(text) : {};
     } catch (error) {
@@ -105,6 +113,8 @@ async function handleLogin(event) {
         const data = await apiRequest('/auth/login', 'POST', { email, password });
         localStorage.setItem('authToken', data.token);
         await loadUserProfile(data.token);
+        // Navigate to dashboard after login
+        window.location.hash = 'dashboard';
     } catch (error) {
         // Error toast is handled by apiRequest
     } finally {
@@ -117,8 +127,8 @@ async function logout() {
     currentUserProfile = null;
     updateUIForGuest();
     authModal.style.display = 'flex';
-    showPage('dashboard');
-    window.location.hash = '';
+    // Navigate to dashboard on logout
+    window.location.hash = 'dashboard';
 }
 
 async function loadUserProfile(token) {
@@ -130,7 +140,6 @@ async function loadUserProfile(token) {
         await updateUI(data.history);
         authModal.style.display = 'none';
         document.getElementById('forgotPasswordModal').style.display = 'none';
-        showPage('dashboard');
     } catch (error) {
         logout();
     } finally {
@@ -178,6 +187,8 @@ async function handleQRScan(decodedText) {
         currentUserProfile.points = data.points;
         showToast(data.message, "success");
         await updateUI();
+        // Navigate to dashboard after scan
+        window.location.hash = 'dashboard';
     } catch (error) {
         // Error toast handled by apiRequest
     } finally {
@@ -185,31 +196,39 @@ async function handleQRScan(decodedText) {
     }
 }
 
-async function redeemCoupon(couponId, pointsRequired) {
-    if (!currentUserProfile || currentUserProfile.points < pointsRequired) return;
-    showLoading();
-    const coupon = defaultCoupons.find(c => c.id === couponId);
+// Replace the old redeemCoupon with this
+async function redeemCoupon(couponId, couponName, pointsRequired) {
+    if (!currentUserProfile || currentUserProfile.points < pointsRequired) {
+        showToast('You do not have enough points.', 'warning');
+        return;
+    }
+
+    if (!confirm(`Spend ${pointsRequired} points to redeem "${couponName}"?`)) {
+        return;
+    }
+
+    showLoading('Redeeming...');
     try {
-        const data = await apiRequest('/user/redeem', 'POST', {
-            couponId,
-            pointsRequired,
-            couponName: coupon.name,
-        });
-        currentUserProfile.points = data.points;
-        await updateUI();
-        loadCoupons();
-        document.getElementById('redeemedCouponName').textContent = coupon.name;
-        document.getElementById('redeemCodeDisplay').textContent = generateRedeemCode();
+        const data = await apiRequest('/coupons/redeem', 'POST', { couponId });
+
+        currentUserProfile.points = data.newPoints; 
+        await updateUI(); 
+        await loadCoupons();
+
+        document.getElementById('redeemedCouponName').textContent = couponName;
+        document.getElementById('redeemCodeDisplay').textContent = data.redeemCode;
         document.getElementById('redeemCodeModal').style.display = 'flex';
         startRedeemTimer();
+        showToast(data.message, 'success');
+
     } catch (error) {
-        // Error toast handled by apiRequest
+        // The error toast is handled by apiRequest, which gets the error
+        // message directly from your server (e.g., "Coupon is out of stock!").
     } finally {
         hideLoading();
     }
 }
-
-// --- Unmodified Helper Functions ---
+// --- Helper Functions ---
 function updateUIForGuest() {
     document.getElementById('userName').innerText = 'Guest';
     ['userPoints', 'totalPoints', 'totalScans', 'totalRedeemed'].forEach(id => document.getElementById(id).innerText = '0');
@@ -248,14 +267,43 @@ function renderPointsHistory(historyData) {
     });
 }
 
-function loadCoupons() {
+// Replace the old loadCoupons with this
+async function loadCoupons() {
     const couponsGrid = document.getElementById('couponsGrid');
     couponsGrid.innerHTML = '';
-    defaultCoupons.forEach(coupon => {
-        const canRedeem = currentUserProfile && currentUserProfile.points >= coupon.points;
-        let buttonText = canRedeem ? 'Redeem Now' : (currentUserProfile ? 'Insufficient Points' : 'Login to Redeem');
-        couponsGrid.innerHTML += `<div class="card coupon-card"><div class="coupon-header"><div class="coupon-name">${coupon.name}</div><div class="coupon-points"><i class="fas fa-coins"></i> ${coupon.points} Points</div></div><div class="coupon-body"><p class="coupon-description">Redeem for exclusive eco-friendly benefits!</p><button class="coupon-btn" onclick="redeemCoupon('${coupon.id}', ${coupon.points})" ${!canRedeem ? 'disabled' : ''}>${buttonText}</button></div></div>`;
-    });
+    showLoading('Loading coupons...');
+
+    try {
+        const coupons = await apiRequest('/coupons', 'GET');
+        
+        if (coupons.length === 0) {
+            couponsGrid.innerHTML = '<p>No coupons available at the moment. Check back later!</p>';
+            return;
+        }
+
+        coupons.forEach(coupon => {
+            const canRedeem = currentUserProfile && currentUserProfile.points >= coupon.pointsRequired;
+            let buttonText = canRedeem ? 'Redeem Now' : (currentUserProfile ? 'Insufficient Points' : 'Login to Redeem');
+            
+            couponsGrid.innerHTML += `
+                <div class="card coupon-card">
+                    <div class="coupon-header">
+                        <div class="coupon-name">${coupon.name}</div>
+                        <div class="coupon-points"><i class="fas fa-coins"></i> ${coupon.pointsRequired} Points</div>
+                    </div>
+                    <div class="coupon-body">
+                        <p class="coupon-description">${coupon.description}</p>
+                        <button class="coupon-btn" onclick="redeemCoupon('${coupon._id}', '${coupon.name}', ${coupon.pointsRequired})" ${!canRedeem ? 'disabled' : ''}>
+                            ${buttonText}
+                        </button>
+                    </div>
+                </div>`;
+        });
+    } catch (error) {
+        couponsGrid.innerHTML = '<p>Could not load coupons. Please try again later.</p>';
+    } finally {
+        hideLoading();
+    }
 }
 
 async function startScanner() {
@@ -347,12 +395,21 @@ function hideForgotPasswordModal() {
 
 function showPage(pageId) {
     document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-    document.getElementById(`${pageId}Page`)?.classList.add('active');
+    const pageElement = document.getElementById(`${pageId}Page`);
+    if (pageElement) {
+        pageElement.classList.add('active');
+    }
+
     document.getElementById('navLinks').classList.remove('active');
     if (pageId !== 'scan' && isScannerActive) stopScanner();
+    
+    // CORRECTED LOGIC
     if (currentUserProfile) {
         if (pageId === 'dashboard' || pageId === 'history') updateUI();
         else if (pageId === 'coupons') loadCoupons();
+    } else if (pageId === 'resetPassword') {
+        // This case is intentionally left blank but is needed for the router
+        // to correctly show the page when a user is logged out.
     }
 }
 
@@ -391,7 +448,6 @@ function showToast(message, type = 'info') {
 document.addEventListener('DOMContentLoaded', initApp);
 
 // Expose functions to global scope for HTML onclick attributes
-window.showPage = showPage;
 window.toggleNav = toggleNav;
 window.logout = logout;
 window.startScanner = startScanner;

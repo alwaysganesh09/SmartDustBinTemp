@@ -22,6 +22,10 @@ mongoose.connect(process.env.MONGO_URI)
 app.use('/api/auth', require('../routes/auth'));
 app.use('/api/user', require('../routes/user'));
 
+// --- ADD THIS LINE ---
+// This tells your app to use the new coupon routes we created.
+app.use('/api/coupons', require('../routes/coupon.routes')); // Or whatever you named the file
+
 // --- Export for Vercel ---
 // This is the standard way to export your app for Vercel's serverless environment.
 module.exports = app;
