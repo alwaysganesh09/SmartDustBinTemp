@@ -2,10 +2,10 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../middleware/auth'); // Your authentication middleware
+// THE CORRECTED CODE
 const Coupon = require('../models/coupon.model');
-const User = require('../models/user.model');
-const History = require('../models/history.model'); // Assuming you have a history model
-
+const User = require('../models/User');           // Corrected: Capital 'U' and removed ".model"
+const History = require('../models/PointsHistory'); // Corrected: Filename is PointsHistory 
 // --- GET ALL AVAILABLE COUPONS ---
 // @route   GET /api/coupons
 router.get('/', async (req, res) => {
