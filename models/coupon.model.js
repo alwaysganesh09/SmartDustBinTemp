@@ -1,4 +1,3 @@
-// In coupon.model.js
 const mongoose = require('mongoose');
 
 const couponSchema = new mongoose.Schema({
@@ -26,6 +25,15 @@ const couponSchema = new mongoose.Schema({
     },
     expiryDate: {
         type: Date
+    },
+    // --- Final fields for hybrid coupons ---
+    cashPrice: {
+        type: Number,
+        default: 0
+    },
+    imageUrl: {
+        type: String,
+        default: ''
     }
 }, { timestamps: true });
 

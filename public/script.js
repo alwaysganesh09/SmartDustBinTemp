@@ -6,15 +6,6 @@ let isScannerActive = false;
 let redeemTimerInterval = null;
 const EXPECTED_FRAME_QR_CONTENT = 'https://qrco.de/bgBWbc';
 
-const defaultCoupons = [
-    // { id: 'coupon1', name: '10% Off at Green Mart', points: 100 },
-    // { id: 'coupon2', name: 'Free Coffee at EcoCafe', points: 50 },
-    // { id: 'coupon3', name: '20% Off Recycled Clothing', points: 200 },
-    // { id: 'coupon4', name: 'Free Plant Seedling', points: 75 },
-    // { id: 'coupon5', name: '15% Off Solar Gadgets', points: 150 },
-    // { id: 'coupon6', name: 'Free Eco-Bag', points: 30 },
-];
-
 // --- UI Element References ---
 const authModal = document.getElementById('authModal');
 const loadingOverlay = document.getElementById('loadingOverlay');
@@ -27,16 +18,28 @@ async function initApp() {
     console.log("Smart Dust Bin App Initializing with Node/MongoDB backend...");
     setupEventListeners();
     await checkLoginState();
-    // Set up the router to handle navigation
     window.addEventListener('hashchange', router);
-    router(); // Call router on initial page load
+    router();
 }
 
+// ✅ UPDATED setupEventListeners FUNCTION
 function setupEventListeners() {
     loginForm?.addEventListener('submit', handleLogin);
     registerForm?.addEventListener('submit', handleRegister);
     document.getElementById('forgotPasswordForm')?.addEventListener('submit', handleForgotPassword);
     document.getElementById('passwordResetForm')?.addEventListener('submit', handlePasswordReset);
+
+    // Smart event listener for all redeem buttons
+    const couponsGrid = document.getElementById('couponsGrid');
+    couponsGrid.addEventListener('click', (event) => {
+        const button = event.target.closest('.redeem-btn');
+        if (button) {
+            const couponId = button.dataset.id;
+            const couponName = button.dataset.name;
+            const pointsRequired = parseInt(button.dataset.points, 10);
+            redeemCoupon(couponId, couponName, pointsRequired);
+        }
+    });
 }
 
 async function checkLoginState() {
@@ -49,9 +52,7 @@ async function checkLoginState() {
     }
 }
 
-// --- Router to handle navigation based on URL hash ---
 function router() {
-    // Get the page ID from the hash, or default to 'dashboard'
     const pageId = window.location.hash.substring(1) || 'dashboard';
     showPage(pageId);
 }
@@ -63,10 +64,7 @@ async function apiRequest(endpoint, method = 'GET', body = null) {
     if (token) {
         headers['Authorization'] = `Bearer ${token}`;
     }
-    const config = {
-        method,
-        headers,
-    };
+    const config = { method, headers };
     if (body) {
         config.body = JSON.stringify(body);
     }
@@ -98,7 +96,7 @@ async function handleRegister(event) {
         showToast(data.message, 'success');
         switchTab('login');
     } catch (error) {
-        // Error toast is handled by apiRequest
+        // Handled by apiRequest
     } finally {
         hideLoading();
     }
@@ -113,10 +111,9 @@ async function handleLogin(event) {
         const data = await apiRequest('/auth/login', 'POST', { email, password });
         localStorage.setItem('authToken', data.token);
         await loadUserProfile(data.token);
-        // Navigate to dashboard after login
         window.location.hash = 'dashboard';
     } catch (error) {
-        // Error toast is handled by apiRequest
+        // Handled by apiRequest
     } finally {
         hideLoading();
     }
@@ -127,7 +124,6 @@ async function logout() {
     currentUserProfile = null;
     updateUIForGuest();
     authModal.style.display = 'flex';
-    // Navigate to dashboard on logout
     window.location.hash = 'dashboard';
 }
 
@@ -146,40 +142,33 @@ async function loadUserProfile(token) {
         hideLoading();
     }
 }
-// Add this new function to your script.js
 
+// --- Custom Confirmation Modal Function ---
 function showConfirmation(message, onConfirm) {
     const confirmModal = document.getElementById('confirmModal');
     const confirmMessage = document.getElementById('confirmMessage');
     const confirmBtnYes = document.getElementById('confirmBtnYes');
     const confirmBtnNo = document.getElementById('confirmBtnNo');
 
-    // Set the message
     confirmMessage.textContent = message;
-    
-    // Show the modal
     confirmModal.style.display = 'flex';
 
-    // Create a new function to handle the "Yes" click
     const handleConfirm = () => {
         confirmModal.style.display = 'none';
-        onConfirm(); // This runs the code you want to execute after confirming
+        onConfirm();
         cleanup();
     };
     
-    // Create a new function to handle the "No" click
     const handleCancel = () => {
         confirmModal.style.display = 'none';
         cleanup();
     };
     
-    // A cleanup function to remove old event listeners
     const cleanup = () => {
         confirmBtnYes.removeEventListener('click', handleConfirm);
         confirmBtnNo.removeEventListener('click', handleCancel);
     };
 
-    // Add event listeners for the buttons
     confirmBtnYes.addEventListener('click', handleConfirm);
     confirmBtnNo.addEventListener('click', handleCancel);
 }
@@ -224,16 +213,13 @@ async function handleQRScan(decodedText) {
         currentUserProfile.points = data.points;
         showToast(data.message, "success");
         await updateUI();
-        // Navigate to dashboard after scan
         window.location.hash = 'dashboard';
     } catch (error) {
-        // Error toast handled by apiRequest
+        // Handled by apiRequest
     } finally {
         hideLoading();
     }
 }
-
-// Replace your old redeemCoupon function with this new one
 
 async function redeemCoupon(couponId, couponName, pointsRequired) {
     if (!currentUserProfile || currentUserProfile.points < pointsRequired) {
@@ -241,11 +227,9 @@ async function redeemCoupon(couponId, couponName, pointsRequired) {
         return;
     }
 
-    // Use our new custom confirmation modal!
     const confirmationMessage = `Spend ${pointsRequired} points to redeem "${couponName}"?`;
     
     showConfirmation(confirmationMessage, async () => {
-        // This code only runs if the user clicks "Yes, Redeem"
         showLoading('Redeeming...');
         try {
             const data = await apiRequest('/coupons/redeem', 'POST', { couponId });
@@ -261,12 +245,13 @@ async function redeemCoupon(couponId, couponName, pointsRequired) {
             showToast(data.message, 'success');
 
         } catch (error) {
-            // The error toast is handled by apiRequest.
+            // Handled by apiRequest
         } finally {
             hideLoading();
         }
     });
 }
+
 // --- Helper Functions ---
 function updateUIForGuest() {
     document.getElementById('userName').innerText = 'Guest';
@@ -306,7 +291,7 @@ function renderPointsHistory(historyData) {
     });
 }
 
-// Replace the old loadCoupons with this
+// ✅ FINAL, UPDATED loadCoupons FUNCTION
 async function loadCoupons() {
     const couponsGrid = document.getElementById('couponsGrid');
     couponsGrid.innerHTML = '';
@@ -323,18 +308,33 @@ async function loadCoupons() {
         coupons.forEach(coupon => {
             const canRedeem = currentUserProfile && currentUserProfile.points >= coupon.pointsRequired;
             let buttonText = canRedeem ? 'Redeem Now' : (currentUserProfile ? 'Insufficient Points' : 'Login to Redeem');
-            
+
+            const imageHtml = coupon.imageUrl 
+                ? `<img src="${coupon.imageUrl}" alt="${coupon.name}" class="coupon-image">`
+                : '';
+
+            const priceHtml = coupon.cashPrice > 0
+                ? `<i class="fas fa-coins"></i> ${coupon.pointsRequired} Points + ₹${coupon.cashPrice}`
+                : `<i class="fas fa-coins"></i> ${coupon.pointsRequired} Points`;
+
             couponsGrid.innerHTML += `
                 <div class="card coupon-card">
-                    <div class="coupon-header">
-                        <div class="coupon-name">${coupon.name}</div>
-                        <div class="coupon-points"><i class="fas fa-coins"></i> ${coupon.pointsRequired} Points</div>
-                    </div>
-                    <div class="coupon-body">
-                        <p class="coupon-description">${coupon.description}</p>
-                        <button class="coupon-btn" onclick="redeemCoupon('${coupon._id}', '${coupon.name}', ${coupon.pointsRequired})" ${!canRedeem ? 'disabled' : ''}>
-                            ${buttonText}
-                        </button>
+                    ${imageHtml}
+                    <div class="coupon-content">
+                        <div class="coupon-header">
+                            <div class="coupon-name">${coupon.name}</div>
+                            <div class="coupon-points">${priceHtml}</div>
+                        </div>
+                        <div class="coupon-body">
+                            <p class="coupon-description">${coupon.description || 'Redeem for exclusive benefits!'}</p>
+                            <button class="coupon-btn redeem-btn" 
+                                data-id="${coupon._id}"
+                                data-name="${coupon.name}"
+                                data-points="${coupon.pointsRequired}"
+                                ${!canRedeem ? 'disabled' : ''}>
+                                ${buttonText}
+                            </button>
+                        </div>
                     </div>
                 </div>`;
         });
@@ -442,7 +442,6 @@ function showPage(pageId) {
     document.getElementById('navLinks').classList.remove('active');
     if (pageId !== 'scan' && isScannerActive) stopScanner();
     
-    // CORRECTED LOGIC
     if (currentUserProfile) {
         if (pageId === 'dashboard' || pageId === 'history') updateUI();
         else if (pageId === 'coupons') loadCoupons();
@@ -492,7 +491,7 @@ window.logout = logout;
 window.startScanner = startScanner;
 window.stopScanner = stopScanner;
 window.generateDemoQR = generateDemoQR;
-window.redeemCoupon = redeemCoupon;
+// Note: redeemCoupon is no longer needed on the window object
 window.switchTab = switchTab;
 window.togglePasswordVisibility = togglePasswordVisibility;
 window.showForgotPasswordModal = showForgotPasswordModal;
