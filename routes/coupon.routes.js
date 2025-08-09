@@ -1,11 +1,10 @@
-// In coupon.routes.js
 const express = require('express');
 const router = express.Router();
-const authMiddleware = require('../middleware/auth'); // Your authentication middleware
-// THE CORRECTED CODE
+const authMiddleware = require('../middleware/auth');
 const Coupon = require('../models/coupon.model');
-const User = require('../models/User');           // Corrected: Capital 'U' and removed ".model"
-const History = require('../models/PointsHistory'); // Corrected: Filename is PointsHistory 
+const User = require('../models/User');
+const History = require('../models/PointsHistory');
+
 // --- GET ALL AVAILABLE COUPONS ---
 // @route   GET /api/coupons
 router.get('/', async (req, res) => {
@@ -52,9 +51,9 @@ router.post('/redeem', authMiddleware, async (req, res) => {
         await user.save();
         await coupon.save();
 
-        // Create a history record for the transaction
+        // --- Create a history record for the transaction ---
         const historyRecord = new History({
-            user: user._id,
+            userId: user._id, // ✅ CORRECTED THIS LINE
             action: 'coupon_redeem',
             points_change: -coupon.pointsRequired,
             description: `Redeemed coupon: ${coupon.name}`
