@@ -1149,3 +1149,33 @@ input:focus,
     --coupon-header-color: #9d174d;
     --coupon-btn-bg-color: #ec4899;
 }
+/* Add this to your styles.css file */
+
+/* Update the main header to center everything */
+.page-header {
+    text-align: center;
+    padding-bottom: 2rem;
+}
+
+/* Style for the big welcome message */
+.welcome-message {
+    font-size: 2.25rem;  /* This makes the text much bigger */
+    font-weight: 600;
+    color: #fff;
+    margin-top: 1rem;
+    margin-bottom: 1.25rem; /* Space between message and points */
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2); /* Adds a subtle shadow */
+}
+
+/* Updated style for the points display */
+.points-display {
+    display: inline-flex; /* Makes the background fit the content */
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.5rem;
+    background-color: rgba(0, 0, 0, 0.15);
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #fff;
+}
