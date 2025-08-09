@@ -292,6 +292,7 @@ function renderPointsHistory(historyData) {
 }
 
 // ✅ FINAL, UPDATED loadCoupons FUNCTION
+// In script.js, replace your loadCoupons function with this
 async function loadCoupons() {
     const couponsGrid = document.getElementById('couponsGrid');
     couponsGrid.innerHTML = '';
@@ -317,8 +318,11 @@ async function loadCoupons() {
                 ? `<i class="fas fa-coins"></i> ${coupon.pointsRequired} Points + ₹${coupon.cashPrice}`
                 : `<i class="fas fa-coins"></i> ${coupon.pointsRequired} Points`;
 
+            // ✅ THIS LINE IS THE KEY CHANGE. It adds the theme class.
+            const themeClass = `theme-${coupon.theme || 'default'}`;
+
             couponsGrid.innerHTML += `
-                <div class="card coupon-card">
+                <div class="card coupon-card ${themeClass}">
                     ${imageHtml}
                     <div class="coupon-content">
                         <div class="coupon-header">
@@ -344,7 +348,6 @@ async function loadCoupons() {
         hideLoading();
     }
 }
-
 async function startScanner() {
     if (!currentUserProfile || isScannerActive) return;
     isScannerActive = true;

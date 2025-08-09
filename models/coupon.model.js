@@ -34,6 +34,10 @@ const couponSchema = new mongoose.Schema({
     imageUrl: {
         type: String,
         default: ''
+    },
+    theme: {
+        type: String,
+        default: 'default' // A default theme if none is specified
     }
 }, { timestamps: true });
 

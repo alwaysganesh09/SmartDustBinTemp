@@ -1094,3 +1094,58 @@ input:focus,
     border-radius: 10px 10px 0 0; /* Rounded corners only on top */
     margin-bottom: 1rem;
 }
+
+/* Add this to your styles.css file */
+
+/* First, update the .coupon-card to use variables */
+.coupon-card {
+    background: var(--coupon-bg-color, #f3e8ff); /* Default background */
+    border: 1px solid var(--coupon-border-color, #d8b4fe);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.coupon-header .coupon-name {
+    color: var(--coupon-header-color, #581c87);
+}
+
+.coupon-btn {
+    background-color: var(--coupon-btn-bg-color, #9333ea);
+}
+
+/* --- DEFINE YOUR THEMES --- */
+
+/* Default Theme (matches your current green) */
+.coupon-card.theme-default {
+    --coupon-bg-color: #f0fdf4;
+    --coupon-border-color: #bbf7d0;
+    --coupon-header-color: #166534;
+    --coupon-btn-bg-color: #22c55e;
+}
+
+/* Donation Theme (Blue) */
+.coupon-card.theme-donation {
+    --coupon-bg-color: #e0f2fe;
+    --coupon-border-color: #bae6fd;
+    --coupon-header-color: #0c4a6e;
+    --coupon-btn-bg-color: #0ea5e9;
+}
+
+/* Product/Shop Theme (Orange) */
+.coupon-card.theme-product {
+    --coupon-bg-color: #fff7ed;
+    --coupon-border-color: #fed7aa;
+    --coupon-header-color: #9a3412;
+    --coupon-btn-bg-color: #f97316;
+}
+
+/* Special Offer Theme (Pink/Purple) */
+.coupon-card.theme-special {
+    --coupon-bg-color: #fdf2f8;
+    --coupon-border-color: #fbcfe8;
+    --coupon-header-color: #9d174d;
+    --coupon-btn-bg-color: #ec4899;
+}
