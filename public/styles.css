@@ -1056,3 +1056,33 @@ input:focus,
 #redeemCodeModal {
     z-index: 9999;
 }
+/* Add this CSS to your styles.css file */
+
+.confirm-modal-content {
+    max-width: 400px;
+    text-align: center;
+    padding: 2rem;
+}
+
+.confirm-modal-content h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: var(--neutral-800);
+}
+
+.confirm-modal-content p {
+    margin-bottom: 1.5rem;
+    color: var(--neutral-600);
+    line-height: 1.6;
+}
+
+.confirm-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.confirm-buttons .auth-btn {
+    flex: 1;
+    margin-top: 0;
+}

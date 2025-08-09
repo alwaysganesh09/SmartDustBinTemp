@@ -146,6 +146,43 @@ async function loadUserProfile(token) {
         hideLoading();
     }
 }
+// Add this new function to your script.js
+
+function showConfirmation(message, onConfirm) {
+    const confirmModal = document.getElementById('confirmModal');
+    const confirmMessage = document.getElementById('confirmMessage');
+    const confirmBtnYes = document.getElementById('confirmBtnYes');
+    const confirmBtnNo = document.getElementById('confirmBtnNo');
+
+    // Set the message
+    confirmMessage.textContent = message;
+    
+    // Show the modal
+    confirmModal.style.display = 'flex';
+
+    // Create a new function to handle the "Yes" click
+    const handleConfirm = () => {
+        confirmModal.style.display = 'none';
+        onConfirm(); // This runs the code you want to execute after confirming
+        cleanup();
+    };
+    
+    // Create a new function to handle the "No" click
+    const handleCancel = () => {
+        confirmModal.style.display = 'none';
+        cleanup();
+    };
+    
+    // A cleanup function to remove old event listeners
+    const cleanup = () => {
+        confirmBtnYes.removeEventListener('click', handleConfirm);
+        confirmBtnNo.removeEventListener('click', handleCancel);
+    };
+
+    // Add event listeners for the buttons
+    confirmBtnYes.addEventListener('click', handleConfirm);
+    confirmBtnNo.addEventListener('click', handleCancel);
+}
 
 function handleForgotPassword(event) {
     event.preventDefault();
@@ -196,37 +233,39 @@ async function handleQRScan(decodedText) {
     }
 }
 
-// Replace the old redeemCoupon with this
+// Replace your old redeemCoupon function with this new one
+
 async function redeemCoupon(couponId, couponName, pointsRequired) {
     if (!currentUserProfile || currentUserProfile.points < pointsRequired) {
         showToast('You do not have enough points.', 'warning');
         return;
     }
 
-    if (!confirm(`Spend ${pointsRequired} points to redeem "${couponName}"?`)) {
-        return;
-    }
+    // Use our new custom confirmation modal!
+    const confirmationMessage = `Spend ${pointsRequired} points to redeem "${couponName}"?`;
+    
+    showConfirmation(confirmationMessage, async () => {
+        // This code only runs if the user clicks "Yes, Redeem"
+        showLoading('Redeeming...');
+        try {
+            const data = await apiRequest('/coupons/redeem', 'POST', { couponId });
 
-    showLoading('Redeeming...');
-    try {
-        const data = await apiRequest('/coupons/redeem', 'POST', { couponId });
+            currentUserProfile.points = data.newPoints;
+            await updateUI();
+            await loadCoupons();
 
-        currentUserProfile.points = data.newPoints; 
-        await updateUI(); 
-        await loadCoupons();
+            document.getElementById('redeemedCouponName').textContent = couponName;
+            document.getElementById('redeemCodeDisplay').textContent = data.redeemCode;
+            document.getElementById('redeemCodeModal').style.display = 'flex';
+            startRedeemTimer();
+            showToast(data.message, 'success');
 
-        document.getElementById('redeemedCouponName').textContent = couponName;
-        document.getElementById('redeemCodeDisplay').textContent = data.redeemCode;
-        document.getElementById('redeemCodeModal').style.display = 'flex';
-        startRedeemTimer();
-        showToast(data.message, 'success');
-
-    } catch (error) {
-        // The error toast is handled by apiRequest, which gets the error
-        // message directly from your server (e.g., "Coupon is out of stock!").
-    } finally {
-        hideLoading();
-    }
+        } catch (error) {
+            // The error toast is handled by apiRequest.
+        } finally {
+            hideLoading();
+        }
+    });
 }
 // --- Helper Functions ---
 function updateUIForGuest() {
