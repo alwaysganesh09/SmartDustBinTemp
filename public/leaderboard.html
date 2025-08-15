@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Global Leaderboard - Smart Dust Bin</title>
-    <link rel="stylesheet" href="styles.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         /* Base styles for the page to ensure it looks good on its own */
         body {
-            background-color: var(--neutral-100);
-            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             margin: 0;
             padding: 0;
             color: var(--neutral-800);
@@ -33,12 +32,17 @@
         }
 
         .page-header h1 {
-            color: var(--primary-color);
-            margin: 0;
+            font-size: 32px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .page-header p {
-            color: var(--neutral-600);
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.5;
         }
 
         /* Leaderboard-specific styles */
@@ -144,6 +148,20 @@
             align-items: center;
             gap: 0.5rem;
         }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+            .leaderboard-rank {
+                font-size: 1.5rem;
+                left: 1rem;
+            }
+            .leaderboard-info {
+                margin-left: 3rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -167,6 +185,6 @@
             <p style="text-align:center; color: var(--neutral-500);">Loading leaderboard...</p>
         </div>
     </div>
-    <script type="module" src="leaderboard.js"></script>
+    <script src="leaderboard.js"></script>
 </body>
 </html>

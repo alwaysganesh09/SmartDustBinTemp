@@ -1,6 +1,4 @@
-// This script simulates fetching data from a backend API that connects to MongoDB.
-// In a real application, you would replace this mock data with a real API call.
-
+// leaderboard.js
 let usersData = [];
 let currentSortBy = 'points'; // Default sort order
 
@@ -8,7 +6,6 @@ let currentSortBy = 'points'; // Default sort order
  * Renders the leaderboard items on the page.
  */
 function renderLeaderboard() {
-    // Sort the data based on the currentSortBy variable
     usersData.sort((a, b) => {
         return (b[currentSortBy] || 0) - (a[currentSortBy] || 0);
     });
@@ -19,7 +16,7 @@ function renderLeaderboard() {
         return;
     }
     
-    leaderboardGrid.innerHTML = ''; // Clear previous data
+    leaderboardGrid.innerHTML = '';
 
     if (usersData.length === 0) {
         leaderboardGrid.innerHTML = '<p style="text-align:center; color: var(--neutral-500);">No users on the leaderboard yet.</p>';
@@ -49,29 +46,30 @@ function renderLeaderboard() {
 }
 
 /**
- * Fetches data from a mock API and then renders the leaderboard.
- * A real application would make a 'fetch' call to a backend here.
+ * Fetches data from the backend API and then renders the leaderboard.
  */
-function fetchAndRenderLeaderboard() {
+async function fetchAndRenderLeaderboard() {
     const leaderboardGrid = document.getElementById('leaderboardGrid');
     if (leaderboardGrid) {
         leaderboardGrid.innerHTML = '<p style="text-align:center; color: var(--neutral-500);">Loading leaderboard...</p>';
     }
-    
-    // Simulate an API call to a MongoDB-connected backend
-    setTimeout(() => {
-        // Mock data from a MongoDB collection
-        const mockDbData = [
-            { username: 'EcoChampion', points: 1250, scans: 25 },
-            { username: 'GreenMachine', points: 980, scans: 20 },
-            { username: 'RecycleHero', points: 750, scans: 18 },
-            { username: 'PlanetSaver', points: 500, scans: 15 },
-            { username: 'TrashTamer', points: 300, scans: 10 },
-        ];
+
+    try {
+        const response = await fetch(`/api/leaderboard/top`);
         
-        usersData = mockDbData;
-        renderLeaderboard();
-    }, 1500); // Simulate a 1.5 second network delay
+        if (response.ok) {
+            const data = await response.json();
+            usersData = data;
+            renderLeaderboard();
+        } else {
+            const errorData = await response.json();
+            leaderboardGrid.innerHTML = `<p style="text-align:center; color: red;">Error loading leaderboard: ${errorData.message}</p>`;
+            console.error("Failed to fetch leaderboard:", errorData.message);
+        }
+    } catch (error) {
+        leaderboardGrid.innerHTML = '<p style="text-align:center; color: red;">An unexpected error occurred. Please check your network connection.</p>';
+        console.error("Network error fetching leaderboard:", error);
+    }
 }
 
 /**
@@ -81,13 +79,8 @@ function setupEventListeners() {
     const sortButtons = document.querySelectorAll('.leaderboard-btn');
     sortButtons.forEach(button => {
         button.addEventListener('click', () => {
-            // Remove active class from all buttons
             sortButtons.forEach(btn => btn.classList.remove('active'));
-            
-            // Add active class to the clicked button
             button.classList.add('active');
-
-            // Update the sort criteria and re-render
             currentSortBy = button.dataset.sort;
             renderLeaderboard();
         });
