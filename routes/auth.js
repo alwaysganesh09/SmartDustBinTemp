@@ -3,7 +3,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const PointsHistory = require('../models/PointsHistory'); // <-- Make sure this model is imported
+const PointsHistory = require('../models/PointsHistory');
 
 const router = express.Router();
 
@@ -20,17 +20,17 @@ router.post('/register', async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // --- CHANGE 1: ADD "points: 100" WHEN CREATING THE USER ---
+        // Add 100 points for the welcome bonus
         const user = new User({ 
             username, 
             email, 
             password: hashedPassword, 
-            points: 100 // Welcome points!
+            points: 100 
         });
 
         await user.save();
 
-        // --- CHANGE 2: CREATE A HISTORY RECORD FOR THE BONUS POINTS ---
+        // Create a history record for the bonus points
         await PointsHistory.create({
             userId: user.id,
             action: 'welcome_bonus',
@@ -62,11 +62,12 @@ router.post('/login', async (req, res) => {
 
         const payload = { user: { id: user.id } };
         
+        // Use the JWT_SECRET from the environment variables
         const token = jwt.sign(
-    payload, 
-    process.env.JWT_SECRET, 
-    { expiresIn: '1h' }
-);
+            payload, 
+            process.env.JWT_SECRET, 
+            { expiresIn: '1h' }
+        );
 
         res.json({ token });
 

@@ -12,7 +12,7 @@ module.exports = function(req, res, next) {
 
     // Verify token
     try {
-        // This line is now fixed to use the hardcoded secret key
+        // This line uses the JWT_SECRET from environment variables
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         
         req.user = decoded.user;

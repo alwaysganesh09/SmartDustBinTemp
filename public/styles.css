@@ -6,6 +6,7 @@
 
 :root {
     --primary-color: #2563eb;
+    --primary-light: #4c87fe;
     --secondary-color: #10b981;
     --accent-color: #f59e0b;
     --success-color: #22c55e;
@@ -124,6 +125,60 @@ body {
     transition: var(--transition);
 }
 
+/* Dropdown Menu Styles */
+.nav-dropdown {
+    position: relative;
+}
+
+.dropdown-btn {
+    background: none;
+    color: var(--neutral-600);
+    border: none;
+    padding: 0.75rem 1.25rem;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dropdown-btn:hover {
+    color: var(--primary-color);
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 10;
+    border-radius: 10px;
+    padding: 0.5rem 0;
+    top: 100%;
+    left: 0;
+}
+
+.nav-dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown-content .nav-link {
+    color: var(--neutral-800);
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+
+.dropdown-content .nav-link:hover {
+    background-color: var(--neutral-100);
+    color: var(--primary-color);
+}
+
+
 /* Main Content */
 .main-content {
     margin-top: 64px;
@@ -229,13 +284,24 @@ body {
 }
 
 /* Dashboard */
-.dashboard-grid {
+.dashboard-grid-container {
+    display: grid;
+    gap: 24px;
+}
+
+.dashboard-grid-row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: 24px;
 }
 
-.stats-card {
+.dashboard-grid-full-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+}
+
+.stats-card, .quick-actions, .more-features {
     grid-column: span 1;
 }
 
@@ -265,8 +331,12 @@ body {
     opacity: 0.9;
 }
 
-.quick-actions {
-    padding: 24px;
+/* Quick Actions */
+.action-buttons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
 }
 
 .action-buttons {
@@ -279,29 +349,43 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
-    padding: 24px 16px;
-    background: var(--gradient-secondary);
-    color: white;
+    justify-content: center;
+    text-align: center;
+    padding: 1rem;
     border: none;
-    border-radius: 12px;
+    border-radius: 15px;
+    background-color: var(--neutral-100);
+    color: var(--neutral-800);
     cursor: pointer;
-    transition: var(--transition);
-    font-weight: 600;
+    transition: all 0.3s ease;
     text-decoration: none;
-}
-
-.action-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    font-weight: 600;
 }
 
 .action-btn i {
-    font-size: 24px;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+}
+
+.action-btn span {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.action-btn:hover {
+    transform: scale(1.05);
+    background: var(--gradient-primary);
+    box-shadow: var(--shadow-md);
+    color: white;
+}
+
+.action-btn:hover i {
+    color: white;
 }
 
 .recent-activity {
-    grid-column: span 2;
+    grid-column: span 1;
 }
 
 .activity-list {
@@ -358,6 +442,7 @@ body {
 
 .activity-points {
     font-weight: 600;
+    font-size: 18px;
 }
 
 .activity-points.positive {
@@ -456,8 +541,8 @@ body {
 .demo-qr-container {
     background: white;
     padding: 24px;
-    border-radius: 12px;
     border: 2px dashed var(--neutral-300);
+    border-radius: 12px;
     margin-top: 16px;
 }
 
@@ -888,13 +973,13 @@ body {
 .loading-overlay {
     display: none;
     position: fixed;
+    z-index: 2000;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(5px);
-    z-index: 3000;
     align-items: center;
     justify-content: center;
 }
@@ -1013,8 +1098,16 @@ body {
         padding: 24px 16px;
     }
 
-    .dashboard-grid {
+    .dashboard-grid-container {
         grid-template-columns: 1fr;
+    }
+
+    .dashboard-grid-row {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-card, .quick-actions, .more-features {
+        grid-column: span 1;
     }
 
     .recent-activity {
@@ -1026,7 +1119,7 @@ body {
         gap: 12px;
     }
 
-    .action-buttons {
+    .action-buttons-grid {
         grid-template-columns: 1fr;
     }
 

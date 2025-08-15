@@ -29,6 +29,19 @@
                         <a href="#history" class="nav-link">
                             <i class="fas fa-history"></i> History
                         </a>
+                        <div class="nav-dropdown">
+                            <button class="dropdown-btn">
+                                <i class="fas fa-info-circle"></i> About Us <i class="fas fa-caret-down"></i>
+                            </button>
+                            <div class="dropdown-content">
+                                <a href="developers.html" class="nav-link">
+                                    <i class="fas fa-code"></i> Developers
+                                </a>
+                                <a href="contact.html" class="nav-link">
+                                    <i class="fas fa-envelope"></i> Contact Us
+                                </a>
+                            </div>
+                        </div>
                         <a href="#" onclick="logout()" class="nav-link logout-btn">
                             <i class="fas fa-sign-out-alt"></i> Logout
                         </a>
@@ -164,52 +177,98 @@
                     </div>
                 </div>
 
-                <div class="dashboard-grid">
-                    <div class="card stats-card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-chart-line"></i> Your Stats</h3>
+                <div class="dashboard-grid-container">
+                    <div class="dashboard-grid-row">
+                        <div class="card stats-card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-chart-line"></i> Your Stats</h3>
+                            </div>
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <div class="stat-value" id="totalPoints">0</div>
+                                    <div class="stat-label">Total Points</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value" id="totalScans">0</div>
+                                    <div class="stat-label">QR Scans</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value" id="totalRedeemed">0</div>
+                                    <div class="stat-label">Coupons Used</div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="stats-grid">
-                            <div class="stat-item">
-                                <div class="stat-value" id="totalPoints">0</div>
-                                <div class="stat-label">Total Points</div>
+
+                        <div class="card quick-actions">
+                            <div class="card-header">
+                                <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
                             </div>
-                            <div class="stat-item">
-                                <div class="stat-value" id="totalScans">0</div>
-                                <div class="stat-label">QR Scans</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value" id="totalRedeemed">0</div>
-                                <div class="stat-label">Coupons Used</div>
+                            <div class="action-buttons-grid">
+                                <button class="action-btn" onclick="window.location.hash = 'scan'">
+                                    <i class="fas fa-qrcode"></i>
+                                    <span>Scan QR Code</span>
+                                </button>
+                                <button class="action-btn" onclick="window.location.hash = 'coupons'">
+                                    <i class="fas fa-gift"></i>
+                                    <span>View Coupons</span>
+                                </button>
+                                <button class="action-btn" onclick="window.location.href = 'contact.html'">
+                                    <i class="fas fa-envelope"></i>
+                                    <span>Contact Us</span>
+                                </button>
+                                <button class="action-btn" onclick="generateDemoQR()">
+                                    <i class="fas fa-magic"></i>
+                                    <span>Demo QR</span>
+                                </button>
+                                <button class="action-btn" onclick="window.location.href = '#history'">
+                                    <i class="fas fa-history"></i>
+                                    <span>View History</span>
+                                </button>
                             </div>
                         </div>
                     </div>
-
-                    <div class="card quick-actions">
-                        <div class="card-header">
-                            <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                    
+                    <div class="dashboard-grid-row">
+                        <div class="card more-features">
+                            <div class="card-header">
+                                <h3><i class="fas fa-plus-circle"></i> More Features</h3>
+                            </div>
+                            <div class="action-buttons-grid">
+                                <button class="action-btn" onclick="window.location.href = 'leaderboard.html'">
+                                    <i class="fas fa-trophy"></i>
+                                    <span>Leaderboard</span>
+                                </button>
+                                <button class="action-btn" onclick="window.location.href = 'tips.html'">
+                                    <i class="fas fa-lightbulb"></i>
+                                    <span>Recycling Tips</span>
+                                </button>
+                            </div>
                         </div>
-                        <div class="action-buttons">
-                            <button class="action-btn" onclick="window.location.hash = 'scan'">
-                                <i class="fas fa-qrcode"></i>
-                                <span>Scan QR Code</span>
-                            </button>
-                            <button class="action-btn" onclick="window.location.hash = 'coupons'">
-                                <i class="fas fa-gift"></i>
-                                <span>View Coupons</span>
-                            </button>
-                            <button class="action-btn" onclick="generateDemoQR()">
-                                <i class="fas fa-magic"></i>
-                                <span>Demo QR</span>
-                            </button>
+                        <!-- You can add another card here for a two-column second row -->
+                        <div class="card more-features">
+                             <div class="card-header">
+                                <h3><i class="fas fa-leaf"></i> Eco Impact</h3>
+                            </div>
+                            <div class="action-buttons-grid">
+                                <button class="action-btn" onclick="alert('This feature is under development!')">
+                                    <i class="fas fa-tree"></i>
+                                    <span>Trees Saved</span>
+                                </button>
+                                <button class="action-btn" onclick="alert('This feature is under development!')">
+                                    <i class="fas fa-tint"></i>
+                                    <span>Water Conserved</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="card recent-activity">
-                        <div class="card-header">
-                            <h3><i class="fas fa-clock"></i> Recent Activity</h3>
-                        </div>
-                        <div id="recentActivity" class="activity-list">
+                    
+                    <div class="dashboard-grid-full-row">
+                        <div class="card recent-activity">
+                            <div class="card-header">
+                                <h3><i class="fas fa-clock"></i> Recent Activity</h3>
+                            </div>
+                            <div id="recentActivity" class="activity-list">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -304,7 +363,7 @@
     </div>
     <footer style="background-color:#715DBB; color: #000000; text-align: center; padding: 1rem 0; font-size: 0.9rem; border-top: 1px solid #2d3748; margin-top: auto;">
         <div style="max-width: 1200px; margin: 0 auto; padding: 0 1.5rem;">
-            &copy; 2025 Smart Dust Bin. All rights reserved. Developed by Team TITANS.
+            &copy; 2025 Smart Dust Bin. All rights reserved.<img src="images/LOGO.png" alt="Team TITANS Logo" style="height: 30px;vertical-align: middle;margin-right: 10px;border-radius: 30px;" />Developed by Team TITANS.
         </div>
     </footer>
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>

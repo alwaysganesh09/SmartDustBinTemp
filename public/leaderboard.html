@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Leaderboard - Smart Dust Bin</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Base styles for the page to ensure it looks good on its own */
+        body {
+            background-color: var(--neutral-100);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--neutral-800);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .page-header p {
+            color: var(--neutral-600);
+        }
+
+        /* Leaderboard-specific styles */
+        .leaderboard-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .leaderboard-btn {
+            background-color: white;
+            color: var(--neutral-700);
+            border: 2px solid var(--neutral-300);
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .leaderboard-btn.active, .leaderboard-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .leaderboard-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .leaderboard-item {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+        
+        .leaderboard-item:first-child {
+            background: linear-gradient(135deg, #FFD700, #FFC72C);
+        }
+
+        .leaderboard-item:nth-child(2) {
+            background: linear-gradient(135deg, #C0C0C0, #B0B0B0);
+        }
+
+        .leaderboard-item:nth-child(3) {
+            background: linear-gradient(135deg, #CD7F32, #B87333);
+        }
+
+        .leaderboard-rank {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            position: absolute;
+            left: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .leaderboard-item:first-child .leaderboard-rank,
+        .leaderboard-item:nth-child(2) .leaderboard-rank,
+        .leaderboard-item:nth-child(3) .leaderboard-rank {
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .leaderboard-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: 4rem;
+        }
+
+        .leaderboard-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--neutral-300);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .leaderboard-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .leaderboard-score {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-content">
+        <div class="page-header">
+            <h1><i class="fas fa-trophy"></i> Global Leaderboard</h1>
+            <p>See who the top recyclers are in our community!</p>
+        </div>
+
+        <div class="leaderboard-controls">
+            <button class="leaderboard-btn active" data-sort="points">
+                <i class="fas fa-coins"></i> Most Points
+            </button>
+            <button class="leaderboard-btn" data-sort="scans">
+                <i class="fas fa-qrcode"></i> Total Scans
+            </button>
+        </div>
+        
+        <div id="leaderboardGrid" class="leaderboard-grid">
+            <!-- Leaderboard items will be injected here by JavaScript -->
+            <p style="text-align:center; color: var(--neutral-500);">Loading leaderboard...</p>
+        </div>
+    </div>
+    <script type="module" src="leaderboard.js"></script>
+</body>
+</html>

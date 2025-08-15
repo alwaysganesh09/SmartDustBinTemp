@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Smart Dust Bin</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* A simple fix to ensure the page looks good on its own */
+        body {
+            background-color: var(--neutral-100);
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--neutral-800);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            color: #ffffff;
+            margin: 0;
+        }
+
+        .page-header p {
+            color: #ffffff;
+        }
+
+        /* Contact Form Styles from your main styles.css */
+        .contact-form-card {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background: #fff;
+            text-align: left;
+        }
+
+        .contact-form-card h3 {
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        .contact-form-card p {
+            text-align: center;
+            color: var(--neutral-600);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: var(--neutral-700);
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--neutral-300);
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .auth-btn {
+            width: 100%;
+            margin-top: 1rem;
+        }
+        #success-message {
+    text-align: center;
+    padding: 3rem;
+    background-color: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    max-width: 600px;
+    margin: 2rem auto;
+}
+
+#success-message h3 {
+    color: var(--primary-color);
+    font-size: 2rem;
+}
+
+    </style>
+</head>
+<body>
+    <div class="main-content">
+        <div class="page-header">
+            <h1><i class="fas fa-envelope"></i> Contact Us</h1>
+            <p>We'd love to hear from you! Reach out to us with any questions or feedback.</p>
+        </div>
+
+        <div class="contact-container">
+            <div class="card contact-form-card">
+                <h3>Send Us a Message</h3>
+                <p>Fill out the form below and we'll get back to you as soon as we can.</p>
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label for="name">Enter Your Name</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Enter Your Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <input type="text" id="subject" name="subject" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="auth-btn">
+                        <i class="fas fa-paper-plane"></i> Send Message
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <footer style="background-color:#715DBB; color: #000000; text-align: center; padding: 1rem 0; font-size: 0.9rem; border-top: 1px solid #2d3748; margin-top: auto;">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 1.5rem;">
+            &copy; 2025 Smart Dust Bin. All rights reserved.<img src="images/LOGO.png" alt="Team TITANS Logo" style="height: 30px;vertical-align: middle;margin-right: 10px;border-radius: 30px;" />Developed by Team TITANS.
+        </div>
+    </footer>
+
+    <script>
+       document.addEventListener('DOMContentLoaded', function() {
+    // Get a reference to the contact form by its ID
+    const contactForm = document.getElementById('contactForm');
+    
+    // Check if the form element exists on the page
+    if (contactForm) {
+        // Add an event listener for the form's submit event
+        contactForm.addEventListener('submit', async function(event) {
+            // Prevent the default form submission behavior, which would cause a page refresh
+            event.preventDefault();
+
+            // Get a reference to the form's submit button
+            const submitButton = contactForm.querySelector('button[type="submit"]');
+
+            // Disable the button immediately to prevent the user from clicking it again
+            submitButton.disabled = true;
+
+            // Optional: You can add a loading state to the body or a specific element
+            // document.body.classList.add('loading');
+            
+            // Get the form data and prepare it for a URL-encoded POST request
+            const form = event.target;
+            const data = new FormData(form);
+            const formData = new URLSearchParams(data);
+
+            // This is the URL of your deployed Google Apps Script web app
+            const url = 'https://script.google.com/macros/s/AKfycbwa_kxrVCWZplaG4b7nm25-d6xJGdeENgt7-ibYVBFxaf4MHrFZwtCVG1a3qf7146ZzlQ/exec';
+
+            try {
+                // Send the form data to the Apps Script web app using the fetch API
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                // Check if the HTTP response was successful
+                if (response.ok) {
+                    const result = await response.json();
+                    
+                    // Check the status returned from the Apps Script
+                    if (result.status === 'success') {
+                        // Create and display a success message on the page
+                        const messageContainer = document.createElement('div');
+                        messageContainer.id = 'success-message';
+                        messageContainer.innerHTML = '<h3>Thank You!</h3><p>Your message has been sent successfully. The page will refresh in 5 seconds.</p>';
+                        
+                        // Find the main content area and replace the form with the message
+                        const mainContent = document.querySelector('.main-content .contact-container');
+                        if (mainContent) {
+                            mainContent.innerHTML = ''; // Clear the form
+                            mainContent.appendChild(messageContainer);
+                        }
+
+                        // Set a timeout to refresh the page after 5 seconds
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 5000); // 5000 milliseconds = 5 seconds
+
+                    } else {
+                        // If the script returned an error, show an alert
+                        alert('There was an error submitting your form. Please try again.');
+                    }
+                } else {
+                    // Handle cases where the network request failed
+                    alert('Failed to send message. Server error.');
+                }
+            } catch (error) {
+                // Catch any other unexpected errors during the fetch request
+                console.error('Error:', error);
+                alert('An unexpected error occurred. Please try again.');
+            } finally {
+                // This block always runs, whether the request succeeded or failed
+                // Re-enable the button, but only if the page isn't already refreshing
+                if (!document.getElementById('success-message')) {
+                    submitButton.disabled = false;
+                    // document.body.classList.remove('loading');
+                }
+            }
+        });
+    }
+});
+
+
+    </script>
+</body>
+</html>
