@@ -11,7 +11,7 @@
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #4A5568; /* Default text color */
+            color: #4A5568;
         }
 
         /* Custom class for the card flip animation */
@@ -27,7 +27,7 @@
 
         .card-face {
             backface-visibility: hidden;
-            -webkit-backface-visibility: hidden; /* Safari */
+            -webkit-backface-visibility: hidden;
             position: absolute;
             width: 100%;
             height: 100%;
@@ -99,6 +99,7 @@
         </section>
 
         <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
             <div class="relative h-80 card-container">
                 <div class="card w-full h-full">
                     <div class="card-face absolute w-full h-full bg-white rounded-xl shadow-lg p-6 flex flex-col items-center justify-center text-center">
@@ -113,10 +114,10 @@
                     <div class="card-face card-face-back absolute w-full h-full bg-white rounded-xl shadow-lg p-6 overflow-y-auto">
                         <h3 class="text-xl font-bold text-gray-800 mb-3">Golden Rules</h3>
                         <ul class="list-disc list-inside text-left space-y-2 text-gray-600">
-                            <li><strong>Clean & Dry:</strong> Rinse food containers and let them dry. One dirty item can contaminate an entire batch.</li>
-                            <li><strong>Know Your Local Rules:</strong> Recycling programs vary by city. Check your local municipality's website for specific guidelines.</li>
-                            <li><strong>Don't Bag Recyclables:</strong> Place items loose in your bin unless your local program specifically asks you to bag them.</li>
-                            <li><strong>When in Doubt, Throw it Out:</strong> It's better to discard a questionable item than to risk contaminating a batch of recyclables.</li>
+                            <li><strong>Clean & Dry:</strong> Rinse food containers and let them dry.</li>
+                            <li><strong>Know Your Local Rules:</strong> Recycling programs vary by city.</li>
+                            <li><strong>Don't Bag Recyclables:</strong> Place items loose in your bin.</li>
+                            <li><strong>When in Doubt, Throw it Out:</strong> Avoid contaminating batches.</li>
                         </ul>
                     </div>
                 </div>
@@ -191,7 +192,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="relative h-80 card-container">
                 <div class="card w-full h-full">
                     <div class="card-face absolute w-full h-full bg-white rounded-xl shadow-lg p-6 flex flex-col items-center justify-center text-center">
@@ -237,6 +238,7 @@
                     </div>
                 </div>
             </div>
+
         </main>
     </div>
 
@@ -255,7 +257,6 @@
             </div>
         </div>
     </div>
-
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -278,17 +279,13 @@
 
             const showLoading = () => {
                 modalTitle.textContent = 'Thinking...';
-                // CORRECTED: Use backticks for template literals
                 modalContent.innerHTML = `<div class="flex justify-center items-center h-32"><div class="loader"></div></div>`;
                 showModal();
             };
 
             const displayResult = (itemName, resultText) => {
-                // CORRECTED: Use backticks for template literals
                 modalTitle.textContent = `How to recycle: ${itemName}`;
-                // Basic formatting for the response text
                 const formattedText = resultText.replace(/\n/g, '<br>');
-                // CORRECTED: Use backticks for template literals
                 modalContent.innerHTML = `<p>${formattedText}</p>`;
             };
             
@@ -308,7 +305,7 @@
 
                 const prompt = `Provide clear, simple, and concise recycling or disposal instructions for the following item: "${itemName}". Start with a direct answer (e.g., "Yes, you can recycle it," or "No, this goes in the trash."). Then, provide 1-3 short bullet points with key instructions, like cleaning or special drop-off locations.`;
                 
-                // This function calls the Gemini API with exponential backoff for retries
+                // This function calls the Gemini API via a Vercel serverless function
                 await callGemini(prompt, itemName);
             });
 
@@ -321,19 +318,11 @@
 
             // --- Gemini API Call Logic ---
             async function callGemini(prompt, itemName, retries = 3, delay = 1000) {
-                // NOTE: Replace with your actual Gemini API Key
-                const apiKey = "AIzaSyBlU0vxeJolVBn0zsa_tBlWducSxvCK86U"; 
-                if (apiKey === "YOUR_API_KEY_HERE" || !apiKey) {
-                    displayError("API key is not set. Please provide your Gemini API key.");
-                    return;
-                }
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-
-                let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
-                const payload = { contents: chatHistory };
+                const serverlessApiUrl = '/api/gemini';
+                const payload = { prompt: prompt };
 
                 try {
-                    const response = await fetch(apiUrl, {
+                    const response = await fetch(serverlessApiUrl, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payload)
@@ -346,28 +335,23 @@
                             await new Promise(res => setTimeout(res, delay));
                             return callGemini(prompt, itemName, retries - 1, delay * 2); // Exponential backoff
                         }
-                        throw new Error(`API request failed with status ${response.status}: ${response.statusText}`);
+                        throw new Error(`Serverless function failed with status ${response.status}: ${response.statusText}`);
                     }
 
                     const result = await response.json();
                     
-                    if (result.candidates && result.candidates.length > 0 &&
-                        result.candidates[0].content && result.candidates[0].content.parts &&
-                        result.candidates[0].content.parts.length > 0) {
-                        const text = result.candidates[0].content.parts[0].text;
-                        displayResult(itemName, text);
+                    if (result.text) {
+                        displayResult(itemName, result.text);
                     } else {
-                        // Handle cases where the response structure is unexpected
                         console.error("Unexpected API response structure:", result);
                         displayError("Sorry, the AI returned an unexpected response. Please try again.");
                     }
                 } catch (error) {
-                    console.error("Error calling Gemini API:", error);
+                    console.error("Error calling Gemini API via serverless function:", error);
                     displayError("Sorry, something went wrong while contacting the AI assistant. Please check your connection and try again.");
                 }
             }
         });
     </script>
-
 </body>
 </html>
