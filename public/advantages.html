@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advantages of Smart Dustbin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Internal CSS for custom styling and animations */
+       /* Custom CSS Variables */
+:root {
+    --primary-color: #667eea;
+    --secondary-color: #764ba2;
+    --neutral-100: #f3f4f6;
+    --neutral-300: #d1d5db;
+    --neutral-500: #6b7280;
+    --neutral-700: #374151;
+    --neutral-800: #1f2937;
+    /* You can add more colors here if needed */
+}
+
+/* Internal CSS for custom styling and animations */
+body {
+    font-family: 'Inter', sans-serif;
+    /* Use CSS variables for the background gradient */
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: var(--neutral-800);
+}
+
+/* Animation for elements fading in on scroll */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.scroll-animate {
+    opacity: 0; /* Start hidden */
+}
+        
+/* A subtle glow effect for the header */
+.header-glow {
+    text-shadow: 0 0 15px rgba(238, 242, 255, 0.4);
+}
+
+/* Styling for the content sections to match the dashboard theme */
+.content-card {
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 1rem;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="min-h-screen p-4 sm:p-6 lg:p-8" style="background: linear-gradient(135deg, #5b21b6, #312e81);">
+        <div class="max-w-5xl mx-auto">
+
+            <header class="text-center mb-12 sm:mb-16 scroll-animate">
+                <h1 class="text-4xl sm:text-5xl font-bold text-white header-glow">
+                    Why Smart Dustbins?
+                </h1>
+                <p class="mt-4 text-lg text-indigo-200 max-w-3xl mx-auto">
+                    Discover the key advantages that make smart dustbins an essential component of modern, sustainable cities.
+                </p>
+            </header>
+
+            <main class="space-y-12">
+
+                <section class="md:grid md:grid-cols-2 md:gap-12 items-center scroll-animate">
+                    <div class="mb-6 md:mb-0">
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format&fit=crop" 
+                                alt="Dashboard showing data analytics for optimized routes" 
+                                class="rounded-lg shadow-2xl w-full h-auto object-cover">
+                    </div>
+                    <div class="text-white">
+                        <h2 class="text-3xl font-semibold mb-3 flex items-center">
+                            <span class="flex items-center justify-center w-10 h-10 rounded-full bg-indigo-500 text-white font-bold mr-4">1</span>
+                            Operational Efficiency
+                        </h2>
+                        <p class="text-indigo-200 text-lg">
+                            Sensors monitor fill levels in real-time, allowing for optimized collection routes. This means trucks only service bins that are full, drastically reducing fuel consumption, labor costs, and vehicle wear and tear.
+                        </p>
+                    </div>
+                </section>
+
+                <section class="md:grid md:grid-cols-2 md:gap-12 items-center scroll-animate">
+                    <div class="text-white md:order-2">
+                        <h2 class="text-3xl font-semibold mb-3 flex items-center">
+                            <span class="flex items-center justify-center w-10 h-10 rounded-full bg-emerald-500 text-white font-bold mr-4">2</span>
+                            Environmental Sustainability
+                        </h2>
+                        <p class="text-indigo-200 text-lg">
+                            Fewer trucks on the road means a smaller carbon footprint. By incentivizing proper waste segregation, smart systems also improve recycling rates and support a circular economy.
+                        </p>
+                    </div>
+                    <div class="mb-6 md:mb-0 md:order-1 mt-6 md:mt-0">
+                        <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2071&auto=format&fit=crop" 
+                                alt="Lush green forest representing a healthy environment" 
+                                class="rounded-lg shadow-2xl w-full h-auto object-cover">
+                    </div>
+                </section>
+
+                <section class="md:grid md:grid-cols-2 md:gap-12 items-center scroll-animate">
+                    <div class="mb-6 md:mb-0">
+                        <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1974&auto=format&fit=crop" 
+                                alt="A clean, green city park walkway" 
+                                class="rounded-lg shadow-2xl w-full h-auto object-cover">
+                    </div>
+                    <div class="text-white">
+                        <h2 class="text-3xl font-semibold mb-3 flex items-center">
+                            <span class="flex items-center justify-center w-10 h-10 rounded-full bg-sky-500 text-white font-bold mr-4">3</span>
+                            Cleaner Public Spaces
+                        </h2>
+                        <p class="text-indigo-200 text-lg">
+                            Real-time alerts prevent bins from overflowing, eliminating unsightly messes and reducing pest infestations. This leads to more hygienic, attractive, and enjoyable public areas for everyone.
+                        </p>
+                    </div>
+                </section>
+
+                <section class="md:grid md:grid-cols-2 md:gap-12 items-center scroll-animate">
+                    <div class="text-white md:order-2">
+                        <h2 class="text-3xl font-semibold mb-3 flex items-center">
+                            <span class="flex items-center justify-center w-10 h-10 rounded-full bg-fuchsia-500 text-white font-bold mr-4">4</span>
+                            Data-Driven Planning
+                        </h2>
+                        <p class="text-indigo-200 text-lg">
+                            The data collected provides invaluable insights into waste generation patterns. Cities can use this information to better allocate resources, plan for future needs, and create more effective waste management policies.
+                        </p>
+                    </div>
+                    <div class="mb-6 md:mb-0 md:order-1 mt-6 md:mt-0">
+                        <img src="https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?q=80&w=1906&auto=format&fit=crop" 
+                                alt="A screen showing complex data charts and graphs for city analytics" 
+                                class="rounded-lg shadow-2xl w-full h-auto object-cover">
+                    </div>
+                </section>
+
+                <section class="md:grid md:grid-cols-2 md:gap-12 items-center scroll-animate">
+                    <div class="mb-6 md:mb-0">
+                        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071&auto=format&fit=crop" 
+                                alt="A group of people engaging with technology together" 
+                                class="rounded-lg shadow-2xl w-full h-auto object-cover">
+                    </div>
+                    <div class="text-white">
+                        <h2 class="text-3xl font-semibold mb-3 flex items-center">
+                            <span class="flex items-center justify-center w-10 h-10 rounded-full bg-orange-500 text-white font-bold mr-4">5</span>
+                            Enhanced Citizen Engagement
+                        </h2>
+                        <p class="text-indigo-200 text-lg">
+                            Interactive features like QR code scanning and reward systems turn recycling into a positive, engaging experience. This gamification fosters a stronger sense of community and environmental responsibility.
+                        </p>
+                    </div>
+                </section>
+
+                <section class="md:grid md:grid-cols-2 md:gap-12 items-center scroll-animate">
+                    <div class="text-white md:order-2">
+                        <h2 class="text-3xl font-semibold mb-3 flex items-center">
+                            <span class="flex items-center justify-center w-10 h-10 rounded-full bg-rose-500 text-white font-bold mr-4">6</span>
+                            Improved Public Safety
+                        </h2>
+                        <p class="text-indigo-200 text-lg">
+                            Advanced models can include sensors to detect fires within the bin and automatically send alerts, preventing potential hazards. A cleaner system also reduces public health risks associated with waste.
+                        </p>
+                    </div>
+                    <div class="mb-6 md:mb-0 md:order-1 mt-6 md:mt-0">
+                        <img src="https://images.unsplash.com/photo-1584714268709-c3dd9c92b378?q=80&w=2070&auto=format&fit=crop" 
+                                alt="A smartphone displaying a public safety alert notification" 
+                                class="rounded-lg shadow-2xl w-full h-auto object-cover">
+                    </div>
+                </section>
+            </main>
+            
+             
+
+        </div>
+    </div>
+    <footer class="bg-[#715DBB] text-[#000000] text-center text-sm mt-auto py-4 border-t border-[#2d3748]">
+  <div class="max-w-screen-xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-center sm:justify-between space-y-2 sm:space-y-0">
+    <div class="flex items-center space-x-2" style="justify-content: center;display: flex;align-items: center;margin-left: 350px;">
+        <p class="text-white">&copy; 2025 Smart Dust Bin. All rights reserved.</p>
+      <img src="images/LOGO.png" alt="Team TITANS Logo" class="h-8 rounded-full shadow-md" />
+      <span class="text-white">Developed by Team TITANS</span>
+    </div>
+    
+  </div>
+</footer>
+
+    <script>
+        // JavaScript to trigger animations on scroll
+        document.addEventListener("DOMContentLoaded", function() {
+            const animatedElements = document.querySelectorAll('.scroll-animate');
+
+            // Use Intersection Observer if available for better performance
+            if ("IntersectionObserver" in window) {
+                const observer = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.style.animation = 'fadeIn 1s ease-out forwards';
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.1 });
+
+                animatedElements.forEach(el => {
+                    observer.observe(el);
+                });
+            } else {
+                // Fallback for older browsers that don't support Intersection Observer
+                function animateOnScroll() {
+                    animatedElements.forEach(el => {
+                        const rect = el.getBoundingClientRect();
+                        if (rect.top <= window.innerHeight - 50 && el.style.opacity !== "1") {
+                           el.style.animation = 'fadeIn 1s ease-out forwards';
+                        }
+                    });
+                }
+                window.addEventListener('scroll', animateOnScroll);
+                animateOnScroll(); // Trigger on load
+            }
+        });
+    </script>
+
+</body>
+</html>
