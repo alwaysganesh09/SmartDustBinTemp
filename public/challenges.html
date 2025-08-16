@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Challenges - Smart Dust Bin</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Base styles from the leaderboard page */
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --neutral-100: #f3f4f6;
+            --neutral-300: #d1d5db;
+            --neutral-500: #6b7280;
+            --neutral-700: #374151;
+            --neutral-800: #1f2937;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--neutral-800);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.5;
+        }
+
+        /* Challenges specific styles */
+        .challenge-container {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .challenge-card {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .challenge-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .challenge-card h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+        }
+
+        .challenge-card p {
+            color: var(--neutral-500);
+            line-height: 1.6;
+        }
+
+        .challenge-progress {
+            margin-top: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .progress-bar-container {
+            flex: 1;
+            background-color: var(--neutral-100);
+            border-radius: 50px;
+            height: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 50px;
+            transition: width 0.5s ease-in-out;
+        }
+
+        .progress-text {
+            font-weight: 600;
+            color: var(--neutral-700);
+            white-space: nowrap;
+        }
+        
+        .active-challenge-badge {
+            background-color: #34d399; /* Green for active */
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .past-challenge-badge {
+            background-color: #6b7280; /* Gray for past */
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .challenge-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            color: var(--neutral-500);
+            font-size: 0.9rem;
+        }
+
+        .challenge-details strong {
+            color: var(--neutral-700);
+        }
+
+        /* Footer styles */
+        footer {
+            background-color: #715DBB;
+            color: #000000;
+            text-align: center;
+            padding: 1rem 0;
+            font-size: 0.9rem;
+            border-top: 1px solid #2d3748;
+            margin-top: auto;
+        }
+
+        footer img {
+            height: 30px;
+            vertical-align: middle;
+            margin-right: 10px;
+            border-radius: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-content">
+        <div class="page-header">
+            <h1><i class="fas fa-bullhorn"></i> Community Challenges</h1>
+            <p>Participate in our challenges to earn extra points and make a bigger impact!</p>
+        </div>
+
+        <div id="challengeContainer" class="challenge-container">
+            <p style="text-align:center; color: rgba(255, 255, 255, 0.7);">Loading challenges...</p>
+        </div>
+    </div>
+
+    <footer>
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 1.5rem;">
+            &copy; 2025 Smart Dust Bin. All rights reserved.
+            <img src="images/LOGO.png" alt="Team TITANS Logo" />Developed by Team TITANS.
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const challengeContainer = document.getElementById('challengeContainer');
+
+            // Static data for challenges. This is where you would update the challenges.
+            const challenges = [
+                {
+                    id: 'challenge-01',
+                    name: 'Plastic Bottle Bonanza',
+                    description: 'Recycle the most plastic bottles this month!',
+                    metric: 'plastic',
+                    goal: 150, // Goal for the challenge
+                    userProgress: 75, // Simulated user progress
+                    status: 'active',
+                    bonus: '1000 Bonus Points'
+                },
+                {
+                    id: 'challenge-02',
+                    name: 'The Great Paper Drive',
+                    description: 'Collect the most paper and cardboard.',
+                    metric: 'paper',
+                    goal: 200,
+                    userProgress: 180,
+                    status: 'past',
+                    bonus: '750 Bonus Points'
+                },
+                {
+                    id: 'challenge-03',
+                    name: 'Glass Container Glory',
+                    description: 'The top 3 glass recyclers win big!',
+                    metric: 'glass',
+                    goal: 100,
+                    userProgress: 90,
+                    status: 'active',
+                    bonus: '500 Bonus Points'
+                }
+            ];
+
+            const renderChallenges = () => {
+                challengeContainer.innerHTML = ''; // Clear existing content
+
+                challenges.forEach(challenge => {
+                    const card = document.createElement('div');
+                    card.className = 'challenge-card';
+
+                    const statusBadgeClass = challenge.status === 'active' ? 'active-challenge-badge' : 'past-challenge-badge';
+                    const statusText = challenge.status === 'active' ? 'ACTIVE' : 'PAST';
+
+                    const progressBarWidth = (challenge.userProgress / challenge.goal) * 100;
+
+                    card.innerHTML = `
+                        <span class="${statusBadgeClass}">${statusText}</span>
+                        <h2>${challenge.name}</h2>
+                        <p>${challenge.description}</p>
+                        <div class="challenge-details">
+                            <p>Bonus: <strong>${challenge.bonus}</strong></p>
+                        </div>
+                        <div class="challenge-progress">
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: ${progressBarWidth > 100 ? 100 : progressBarWidth}%;"></div>
+                            </div>
+                            <div class="progress-text">
+                                ${challenge.userProgress}/${challenge.goal}
+                            </div>
+                        </div>
+                    `;
+                    challengeContainer.appendChild(card);
+                });
+            };
+
+            renderChallenges();
+        });
+    </script>
+</body>
+</html>
