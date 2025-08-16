@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Ultimate Guide to Water Conservation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Internal CSS for custom styling and animations */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Animation for elements fading in on scroll */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .scroll-animate {
+            opacity: 0; /* Start hidden */
+        }
+        
+        /* A subtle glow effect for the header */
+        .header-glow {
+            text-shadow: 0 0 20px rgba(238, 242, 255, 0.5);
+        }
+
+        /* Styling for the content cards */
+        .content-card {
+            background-color: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Styling for the water treatment process steps */
+        .step-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .step-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="min-h-screen p-4 sm:p-6 lg:p-8" style="background: linear-gradient(135deg, #5b21b6, #312e81);">
+        <div class="max-w-6xl mx-auto">
+
+            <!-- Header Section -->
+            <header class="text-center mb-12 sm:mb-16 scroll-animate">
+                <div class="flex justify-center mb-4">
+                    <svg class="w-16 h-16 text-sky-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.00098C6.47715 2.00098 2 6.47812 2 12.001C2 17.5238 6.47715 22.001 12 22.001C17.5228 22.001 22 17.5238 22 12.001C22 6.47812 17.5228 2.00098 12 2.00098ZM12.2733 14.9304C11.2486 15.9551 9.43407 16.0682 8.26189 15.1953L12.2733 11.1838V14.9304ZM15.7391 11.8053C14.5669 12.6781 12.7524 12.565 11.7277 11.5394L15.7391 15.5509V11.8053ZM15.7391 9.00098V10.3341L10.2524 15.8208C9.96116 16.1121 9.48962 16.1121 9.19834 15.8208L7.13768 13.7602C6.8464 13.4689 6.8464 12.9973 7.13768 12.706L12.6244 7.21932C12.9157 6.92804 13.3872 6.92804 13.6785 7.21932L15.7391 9.27998V9.00098H17V11.001H15.7391Z"></g></svg>
+                </div>
+                <h1 class="text-4xl sm:text-5xl font-bold text-white header-glow">
+                    Our Planet's Most Precious Resource: Water
+                </h1>
+                <p class="mt-4 text-lg text-indigo-200 max-w-3xl mx-auto">
+                    Understanding water's role, the challenges we face, and how we can all contribute to a sustainable future.
+                </p>
+            </header>
+
+            <!-- Main Content Sections -->
+            <main class="space-y-16">
+
+                <!-- Section 1: Uses of Water -->
+                <section class="content-card p-6 sm:p-10 scroll-animate">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-6">The Vital Roles of Water</h2>
+                    <div class="grid md:grid-cols-2 gap-8 text-center">
+                        <div>
+                            <img src="https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?q=80&w=2070&auto=format&fit=crop" alt="Irrigation sprinklers on a farm field" class="rounded-lg shadow-md mb-4 w-full h-48 object-cover">
+                            <h3 class="text-xl font-semibold text-green-700">Agricultural Use</h3>
+                            <p class="text-gray-600 mt-2">The largest consumer of fresh water globally, crucial for irrigating crops and sustaining livestock to feed the world's population.</p>
+                        </div>
+                        <div>
+                            <img src="https://images.unsplash.com/photo-1567427018141-0584cfcbf1b8?q=80&w=2070&auto=format&fit=crop" alt="Industrial factory pipes" class="rounded-lg shadow-md mb-4 w-full h-48 object-cover">
+                            <h3 class="text-xl font-semibold text-sky-700">Industrial Use</h3>
+                            <p class="text-gray-600 mt-2">Used for manufacturing, cooling processes, generating energy, and as a solvent in countless industrial applications.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 2: Water Scarcity -->
+                <section class="scroll-animate">
+                    <div class="md:grid md:grid-cols-2 md:gap-12 items-center">
+                        <div class="mb-8 md:mb-0">
+                            <img src="https://images.unsplash.com/photo-1569396116180-210c182bedb8?q=80&w=2069&auto=format&fit=crop" alt="Dry, cracked lake bed" class="rounded-2xl shadow-2xl w-full h-auto object-cover">
+                        </div>
+                        <div class="text-white">
+                            <h2 class="text-3xl font-bold mb-4">The Global Water Crisis: A Present Reality</h2>
+                            <p class="text-indigo-200 text-lg mb-4">
+                                Water scarcity is not a future problem; it's happening now. Billions of people worldwide face severe water shortages for at least one month each year. Factors like climate change, population growth, and pollution are putting unprecedented stress on our freshwater supplies.
+                            </p>
+                            <p class="text-indigo-200 text-lg">
+                                In India, the situation is particularly critical, with major cities facing depleting groundwater levels. The time to act is now.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 3: Wastewater to Drinking Water -->
+                <section class="content-card p-6 sm:p-10 scroll-animate">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2 text-center">From Waste to Wonder: The Water Recycling Journey</h2>
+                    <p class="text-center text-gray-600 mb-8 max-w-3xl mx-auto">Advanced water purification technology can safely transform wastewater into high-quality drinking water. This process, known as potable reuse, is a crucial solution for water-scarce regions. Here’s how it works:</p>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <!-- Step 1 -->
+                        <div class="bg-slate-50 p-6 rounded-xl text-center step-card">
+                            <div class="flex justify-center mb-3"><span class="flex items-center justify-center w-12 h-12 rounded-full bg-indigo-500 text-white font-bold text-xl">1</span></div>
+                            <h3 class="text-lg font-semibold text-gray-800">Primary Treatment</h3>
+                            <p class="text-gray-600 text-sm mt-1">Wastewater passes through screens to remove large solids. It then sits in sedimentation tanks where heavier particles sink to the bottom.</p>
+                        </div>
+                        <!-- Step 2 -->
+                        <div class="bg-slate-50 p-6 rounded-xl text-center step-card">
+                            <div class="flex justify-center mb-3"><span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500 text-white font-bold text-xl">2</span></div>
+                            <h3 class="text-lg font-semibold text-gray-800">Secondary Treatment</h3>
+                            <p class="text-gray-600 text-sm mt-1">Biological processes are used. Microorganisms consume organic matter, further cleaning the water.</p>
+                        </div>
+                        <!-- Step 3 -->
+                        <div class="bg-slate-50 p-6 rounded-xl text-center step-card">
+                            <div class="flex justify-center mb-3"><span class="flex items-center justify-center w-12 h-12 rounded-full bg-sky-500 text-white font-bold text-xl">3</span></div>
+                            <h3 class="text-lg font-semibold text-gray-800">Tertiary Treatment</h3>
+                            <p class="text-gray-600 text-sm mt-1">Advanced filtration, such as microfiltration and reverse osmosis, removes microscopic particles, bacteria, and viruses.</p>
+                        </div>
+                        <!-- Step 4 -->
+                        <div class="bg-slate-50 p-6 rounded-xl text-center step-card">
+                            <div class="flex justify-center mb-3"><span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500 text-white font-bold text-xl">4</span></div>
+                            <h3 class="text-lg font-semibold text-gray-800">Disinfection</h3>
+                            <p class="text-gray-600 text-sm mt-1">Ultraviolet (UV) light and chlorine are used to inactivate any remaining pathogens, ensuring the water is safe to drink.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 4: How to Save Water -->
+                <section class="scroll-animate">
+                    <h2 class="text-3xl font-bold text-white mb-8 text-center">Be a Water Hero: Simple Steps to Save Water</h2>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div class="bg-white/10 backdrop-blur-md p-6 rounded-xl text-white">
+                            <h3 class="font-semibold text-xl mb-2">Fix Leaks Promptly</h3>
+                            <p class="text-indigo-200">A single dripping tap can waste over 15,000 liters of water a year. Check all faucets, pipes, and toilets regularly.</p>
+                        </div>
+                        <div class="bg-white/10 backdrop-blur-md p-6 rounded-xl text-white">
+                            <h3 class="font-semibold text-xl mb-2">Take Shorter Showers</h3>
+                            <p class="text-indigo-200">Reducing your shower time by just two minutes can save up to 40 liters of water each time.</p>
+                        </div>
+                        <div class="bg-white/10 backdrop-blur-md p-6 rounded-xl text-white">
+                            <h3 class="font-semibold text-xl mb-2">Turn Off the Tap</h3>
+                            <p class="text-indigo-200">Don't let water run while brushing your teeth or washing dishes. This simple habit saves thousands of liters annually.</p>
+                        </div>
+                        <div class="bg-white/10 backdrop-blur-md p-6 rounded-xl text-white">
+                            <h3 class="font-semibold text-xl mb-2">Use Full Loads</h3>
+                            <p class="text-indigo-200">Only run your washing machine and dishwasher when they are completely full to maximize water efficiency.</p>
+                        </div>
+                        <div class="bg-white/10 backdrop-blur-md p-6 rounded-xl text-white">
+                            <h3 class="font-semibold text-xl mb-2">Install Water-Saving Fixtures</h3>
+                            <p class="text-indigo-200">Low-flow showerheads, faucet aerators, and dual-flush toilets can significantly reduce your household's water consumption.</p>
+                        </div>
+                        <div class="bg-white/10 backdrop-blur-md p-6 rounded-xl text-white">
+                            <h3 class="font-semibold text-xl mb-2">Harvest Rainwater</h3>
+                            <p class="text-indigo-200">Collect rainwater from your roof to use for watering plants, cleaning floors, and other non-potable uses.</p>
+                        </div>
+                    </div>
+                </section>
+            </main>
+            
+            <!-- Footer -->
+            
+
+        </div>
+    </div>
+    <footer class="bg-[#715DBB] text-[#000000] text-center text-sm mt-auto py-4 border-t border-[#2d3748]">
+  <div class="max-w-screen-xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-center sm:justify-between space-y-2 sm:space-y-0">
+    <div class="flex items-center space-x-2" style="justify-content: center;display: flex;align-items: center;margin-left: 350px;">
+        <p class="text-white">&copy; 2025 Smart Dust Bin. All rights reserved.</p>
+      <img src="images/LOGO.png" alt="Team TITANS Logo" class="h-8 rounded-full shadow-md" />
+      <span class="text-white">Developed by Team TITANS</span>
+    </div>
+
+    <script>
+        // JavaScript to trigger animations on scroll
+        document.addEventListener("DOMContentLoaded", function() {
+            const animatedElements = document.querySelectorAll('.scroll-animate');
+
+            // Use Intersection Observer if available for better performance
+            if ("IntersectionObserver" in window) {
+                const observer = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.style.animation = 'fadeIn 1s ease-out forwards';
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.1 });
+
+                animatedElements.forEach(el => {
+                    observer.observe(el);
+                });
+            } else {
+                // Fallback for older browsers that don't support Intersection Observer
+                function animateOnScroll() {
+                    animatedElements.forEach(el => {
+                        const rect = el.getBoundingClientRect();
+                        if (rect.top <= window.innerHeight - 50 && el.style.opacity !== "1") {
+                           el.style.animation = 'fadeIn 1s ease-out forwards';
+                        }
+                    });
+                }
+                window.addEventListener('scroll', animateOnScroll);
+                animateOnScroll(); // Trigger on load
+            }
+        });
+    </script>
+
+</body>
+</html>
