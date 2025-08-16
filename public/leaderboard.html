@@ -1,190 +1,334 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Leaderboard - Smart Dust Bin</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        /* Base styles for the page to ensure it looks good on its own */
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            color: var(--neutral-800);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
+ <html lang="en">
+ <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Global Leaderboard - Smart Dust Bin</title>
+     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+     <style>
+         /* CSS variables for consistent theming */
+         :root {
+             --primary-color: #667eea;
+             --secondary-color: #764ba2;
+             --neutral-300: #d1d5db;
+             --neutral-500: #6b7280;
+             --neutral-700: #374151;
+             --neutral-800: #1f2937;
+         }
 
-        .main-content {
-            flex: 1;
-            padding: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-        }
+         body {
+             background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+             margin: 0;
+             padding: 0;
+             color: var(--neutral-800);
+             display: flex;
+             flex-direction: column;
+             min-height: 100vh;
+         }
 
-        .page-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
+         .main-content {
+             flex: 1;
+             padding: 2rem;
+             max-width: 1200px;
+             margin: 0 auto;
+             width: 100%;
+         }
 
-        .page-header h1 {
-            font-size: 32px;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 8px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+         .page-header {
+             text-align: center;
+             margin-bottom: 2rem;
+         }
 
-        .page-header p {
-            font-size: 18px;
-            color: rgba(255, 255, 255, 0.9);
-            line-height: 1.5;
-        }
+         .page-header h1 {
+             font-size: 32px;
+             font-weight: 700;
+             color: white;
+             margin-bottom: 8px;
+             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+         }
 
-        /* Leaderboard-specific styles */
-        .leaderboard-controls {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
+         .page-header p {
+             font-size: 18px;
+             color: rgba(255, 255, 255, 0.9);
+             line-height: 1.5;
+         }
 
-        .leaderboard-btn {
-            background-color: white;
-            color: var(--neutral-700);
-            border: 2px solid var(--neutral-300);
-            padding: 0.75rem 1.5rem;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
+         .leaderboard-controls {
+             display: flex;
+             justify-content: center;
+             gap: 1rem;
+             margin-bottom: 2rem;
+         }
 
-        .leaderboard-btn.active, .leaderboard-btn:hover {
-            background-color: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
+         .leaderboard-btn {
+             background-color: white;
+             color: var(--neutral-700);
+             border: 2px solid var(--neutral-300);
+             padding: 0.75rem 1.5rem;
+             border-radius: 50px;
+             cursor: pointer;
+             font-weight: 600;
+             transition: all 0.3s ease;
+         }
 
-        .leaderboard-grid {
-            display: grid;
-            gap: 1.5rem;
-        }
+         .leaderboard-btn.active, .leaderboard-btn:hover {
+             background-color: var(--primary-color);
+             color: white;
+             border-color: var(--primary-color);
+         }
 
-        .leaderboard-item {
-            background-color: white;
-            padding: 1.5rem;
-            border-radius: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: relative;
-        }
-        
-        .leaderboard-item:first-child {
-            background: linear-gradient(135deg, #FFD700, #FFC72C);
-        }
+         .leaderboard-grid {
+             display: grid;
+             gap: 1.5rem;
+         }
 
-        .leaderboard-item:nth-child(2) {
-            background: linear-gradient(135deg, #C0C0C0, #B0B0B0);
-        }
+         .leaderboard-item {
+             background-color: white;
+             padding: 1.5rem;
+             border-radius: 20px;
+             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+             display: flex;
+             align-items: center;
+             justify-content: space-between;
+             position: relative;
+             transition: transform 0.3s ease, box-shadow 0.3s ease;
+         }
 
-        .leaderboard-item:nth-child(3) {
-            background: linear-gradient(135deg, #CD7F32, #B87333);
-        }
+         .leaderboard-item:hover {
+             transform: translateY(-5px);
+             box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+         }
 
-        .leaderboard-rank {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--primary-color);
-            position: absolute;
-            left: 1.5rem;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .leaderboard-item:first-child .leaderboard-rank,
-        .leaderboard-item:nth-child(2) .leaderboard-rank,
-        .leaderboard-item:nth-child(3) .leaderboard-rank {
-            color: white;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-        }
-
-        .leaderboard-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-left: 4rem;
-        }
-
-        .leaderboard-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: var(--neutral-300);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        .leaderboard-name {
-            font-size: 1.25rem;
-            font-weight: 600;
-        }
-
-        .leaderboard-score {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--primary-color);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .main-content {
-                padding: 1rem;
+         .leaderboard-item.gold {
+                background: linear-gradient(135deg, #FFD700 20%, #FFEEAA 50%, #FFD700 80%);
+                color: #333333;
+                box-shadow: 0 8px 15px rgba(255, 215, 0, 0.5);
             }
-            .leaderboard-rank {
-                font-size: 1.5rem;
-                left: 1rem;
-            }
-            .leaderboard-info {
-                margin-left: 3rem;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="main-content">
-        <div class="page-header">
-            <h1><i class="fas fa-trophy"></i> Global Leaderboard</h1>
-            <p>See who the top recyclers are in our community!</p>
-        </div>
 
-        <div class="leaderboard-controls">
-            <button class="leaderboard-btn active" data-sort="points">
-                <i class="fas fa-coins"></i> Most Points
-            </button>
-            <button class="leaderboard-btn" data-sort="scans">
-                <i class="fas fa-qrcode"></i> Total Scans
-            </button>
-        </div>
-        
-        <div id="leaderboardGrid" class="leaderboard-grid">
-            <!-- Leaderboard items will be injected here by JavaScript -->
-            <p style="text-align:center; color: var(--neutral-500);">Loading leaderboard...</p>
-        </div>
-    </div>
-    <script src="leaderboard.js"></script>
-</body>
-</html>
+            .leaderboard-item.silver {
+                background: linear-gradient(135deg, #C0C0C0 20%, #F0F0F0 50%, #C0C0C0 80%);
+                color: #444444;
+                box-shadow: 0 8px 15px rgba(192, 192, 192, 0.5);
+            }
+
+            .leaderboard-item.bronze {
+                background: linear-gradient(135deg, #CD7F32 20%, #FFDAB9 50%, #CD7F32 80%);
+                color: #FFFFFF;
+                box-shadow: 0 8px 15px rgba(205, 127, 50, 0.5);
+            }
+
+         .leaderboard-rank {
+             font-size: 2rem;
+             font-weight: bold;
+             color: var(--primary-color);
+             position: absolute;
+             left: 1.5rem;
+             top: 50%;
+             transform: translateY(-50%);
+             transition: color 0.3s ease;
+         }
+
+         .leaderboard-item.gold .leaderboard-rank,
+         .leaderboard-item.silver .leaderboard-rank,
+         .leaderboard-item.bronze .leaderboard-rank {
+             color: white;
+             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+         }
+
+         .leaderboard-info {
+             display: flex;
+             align-items: center;
+             gap: 1rem;
+             margin-left: 4rem;
+         }
+
+         .leaderboard-avatar {
+             width: 50px;
+             height: 50px;
+             border-radius: 50%;
+             background-color: var(--neutral-300);
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             color: white;
+             font-size: 1.5rem;
+             font-weight: bold;
+         }
+
+         .leaderboard-name {
+             font-size: 1.25rem;
+             font-weight: 600;
+         }
+
+         .leaderboard-score {
+             font-size: 1.5rem;
+             font-weight: bold;
+             color: var(--primary-color);
+             display: flex;
+             align-items: center;
+             gap: 0.5rem;
+             transition: color 0.3s ease;
+         }
+
+         .leaderboard-item.gold .leaderboard-name,
+         .leaderboard-item.silver .leaderboard-name,
+         .leaderboard-item.bronze .leaderboard-name {
+             color: white;
+         }
+
+         .leaderboard-item.gold .leaderboard-score,
+         .leaderboard-item.silver .leaderboard-score,
+         .leaderboard-item.bronze .leaderboard-score {
+             color: white;
+         }
+
+         .trophy-icon {
+             width: 20px;
+             height: 20px;
+             margin-left: 5px;
+             vertical-align: middle;
+         }
+
+         /* Responsive Design */
+         @media (max-width: 768px) {
+             .main-content {
+                 padding: 1rem;
+             }
+             .leaderboard-rank {
+                 font-size: 1.5rem;
+                 left: 1rem;
+             }
+             .leaderboard-info {
+                 margin-left: 3rem;
+             }
+         }
+     </style>
+ </head>
+ <body>
+     <div class="main-content">
+         <div class="page-header">
+             <h1><i class="fas fa-trophy"></i> Global Leaderboard</h1>
+             <p>See who the top recyclers are in our community!</p>
+         </div>
+
+         <div class="leaderboard-controls">
+             <button class="leaderboard-btn active" data-sort="points">
+                 <i class="fas fa-coins"></i> Most Points
+             </button>
+             <button class="leaderboard-btn" data-sort="scans">
+                 <i class="fas fa-qrcode"></i> Total Scans
+             </button>
+         </div>
+
+         <div id="leaderboardGrid" class="leaderboard-grid">
+         </div>
+     </div>
+     <footer style="background-color: #715DBB; color: #000000; text-align: center; padding: 1rem 0; font-size: 0.9rem; border-top: 1px solid #2d3748; margin-top: auto;">
+         <div style="max-width: 1200px; margin: 0 auto; padding: 0 1.5rem;">
+             &copy; 2025 Smart Dust Bin. All rights reserved.
+             <img src="images/LOGO.png" alt="Team TITANS Logo" style="height: 30px; vertical-align: middle; margin-right: 10px; border-radius: 30px;" />Developed by Team TITANS.
+         </div>
+     </footer>
+
+     <script>
+         document.addEventListener('DOMContentLoaded', () => {
+             const leaderboardGrid = document.getElementById('leaderboardGrid');
+             const sortButtons = document.querySelectorAll('.leaderboard-btn');
+
+             // Define user data
+             const users = [
+                 { id: 1, name: 'Ch Srinivas', points: 5200, scans: 250 },
+                 { id: 2, name: 'M Venkatesh', points: 4850, scans: 220 },
+                 { id: 3, name: 'N Krishna', points: 4500, scans: 215 },
+                 { id: 4, name: 'P Rajesh', points: 3900, scans: 190 },
+                 { id: 5, name: 'N Lakshmi', points: 3550, scans: 180 },
+                 { id: 6, name: 'K Sita', points: 3200, scans: 170 },
+                 { id: 7, name: 'R Priya', points: 2800, scans: 155 },
+                 { id: 8, name: 'S Anjali', points: 2500, scans: 140 },
+                 { id: 9, name: 'T Ramesh', points: 2100, scans: 120 },
+                 { id: 10, name: 'Ch Divya ', points: 1950, scans: 110 }
+             ];
+
+             // Function to generate a user avatar initial
+             const getUserInitial = (name) => {
+                 return name.split(' ').map(n => n.charAt(0)).join('').toUpperCase();
+             };
+
+             // Function to render the leaderboard
+             const renderLeaderboard = (data, sortBy) => {
+                 // Sort the data based on the selected criteria (points or scans)
+                 const sortedData = [...data].sort((a, b) => b[(sortBy === 'points' ? 'points' : 'scans')] - a[(sortBy === 'points' ? 'points' : 'scans')]);
+
+                 leaderboardGrid.innerHTML = '';
+
+                 sortedData.forEach((user, index) => {
+                     const rank = index + 1;
+                     const isTopThree = rank <= 3;
+                     const medalClass = isTopThree ?
+                         (rank === 1 ? 'gold' : rank === 2 ? 'silver' : 'bronze') : '';
+
+                     const scoreType = sortBy === 'points' ? user.points : user.scans;
+                     const scoreIcon = sortBy === 'points' ? '<i class="fas fa-coins"></i>' : '<i class="fas fa-qrcode"></i>';
+                     const trophy = rank === 1 ? ` <img src="https://img.icons8.com/color/48/000000/trophy.png" alt="Trophy" class="trophy-icon">` : '';
+
+                     const item = document.createElement('div');
+                     item.className = `leaderboard-item ${medalClass}`;
+                     item.innerHTML = `
+                         <div class="leaderboard-rank">${rank}</div>
+                         <div class="leaderboard-info">
+                             <div class="leaderboard-avatar" style="background-color: hsl(${user.id * 36}, 60%, 50%);">${getUserInitial(user.name)}</div>
+                             <div class="leaderboard-name">${user.name}${trophy}</div>
+                         </div>
+                         <div class="leaderboard-score">
+                             ${scoreIcon} ${scoreType}
+                         </div>
+                     `;
+                     leaderboardGrid.appendChild(item);
+                 });
+             };
+
+             let currentSort = 'points';
+             let topUserIndex = 0; // For cycling top users
+
+             // Function to change the order of the top 3 users
+             const cycleTopUsers = () => {
+                 const topThree = users.slice(0, 3);
+                 const rest = users.slice(3);
+
+                 // Reorder the top 3 cyclically
+                 const newTopThree = [...topThree.slice(topUserIndex), ...topThree.slice(0, topUserIndex)];
+
+                 // Combine the new top 3 with the rest of the users
+                 const newUsers = [...newTopThree, ...rest];
+
+                 // Update the original users array to reflect the new order
+                 users.splice(0, users.length, ...newUsers);
+
+                 // Cycle the index for the next run
+                 topUserIndex = (topUserIndex + 1) % 3;
+             };
+
+             // Event listeners for sort buttons
+             sortButtons.forEach(button => {
+                 button.addEventListener('click', () => {
+                     sortButtons.forEach(btn => btn.classList.remove('active'));
+                     button.classList.add('active');
+                     currentSort = button.dataset.sort;
+                     renderLeaderboard(users, currentSort);
+                 });
+             });
+
+             // Initial render
+             renderLeaderboard(users, currentSort);
+
+             // Set interval to cycle top users and re-render
+             // This simulates the "every 2-3 days" update
+             setInterval(() => {
+                 cycleTopUsers();
+                 renderLeaderboard(users, currentSort);
+             }, 5000); // Change order every 5 seconds for demonstration purposes
+         });
+     </script>
+ </body>
+ </html>
