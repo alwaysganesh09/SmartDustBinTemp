@@ -3,223 +3,817 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Ultimate Guide to Water Conservation</title>
+    <title>Water Conservation Website</title>
+    <!-- Use Tailwind CSS for a responsive design framework -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/20GQR+6K5G/bM4T+gB0x0nJ8s8K+z+gS7J7t8Q9t9T7h5A5p5B9wA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
     <style>
-        /* Internal CSS for custom styling and animations */
+        /* Apply the Inter font globally */
         body {
             font-family: 'Inter', sans-serif;
+            /* New gradient background from the dashboard theme */
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
         }
 
-        /* Animation for elements fading in on scroll */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        /* Custom scroll-behavior for smooth scrolling */
+        html {
+            scroll-behavior: smooth;
         }
 
-        .scroll-animate {
-            opacity: 0; /* Start hidden */
-        }
-        
-        /* A subtle glow effect for the header */
-        .header-glow {
-            text-shadow: 0 0 20px rgba(238, 242, 255, 0.5);
+        /* Style for a custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
         }
 
-        /* Styling for the content cards */
-        .content-card {
-            background-color: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 1.5rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        ::-webkit-scrollbar-track {
+            background: rgb(255, 255, 255);
+            border-radius: 4px;
         }
 
-        /* Styling for the water treatment process steps */
-        .step-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        ::-webkit-scrollbar-thumb {
+            background: #6a0dad;
+            border-radius: 4px;
         }
-        .step-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #5a099a;
+        }
+
+        /* General card styling from the dashboard theme */
+        .card {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        /* Styling for a "hero" banner with a placeholder image */
+        .hero-banner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Specific styles for blue-themed elements, similar to the dashboard */
+        .blue-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: #8ec5fc;
+        }
+
+        /* Additional styles for the impact engine inputs */
+        #showerhead-input, #faucet-input, #dishwasher-input {
+            border: 1px solid #e2e8f0;
+            background: #f7fafc;
+            padding: 0.5rem;
+        }
+
+        /* CSS for the Flip Card Effect */
+        .flip-card-container {
+            perspective: 1000px;
+            height: 250px; /* Set a fixed height for a uniform look */
+        }
+
+        .flip-card {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .flip-card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front,
+        .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            box-sizing: border-box;
+            padding: 24px;
+        }
+
+        .flip-card-back {
+            transform: rotateY(180deg);
         }
     </style>
 </head>
-<body class="antialiased">
+<body class="text-gray-800">
 
-    <div class="min-h-screen p-4 sm:p-6 lg:p-8" style="background: linear-gradient(135deg, #5b21b6, #312e81);">
-        <div class="max-w-6xl mx-auto">
+    <!-- Header and Navigation -->
+    <header class="bg-white/70 backdrop-blur-md shadow-lg sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center">
+            <a href="#home" class="text-2xl font-bold text-blue-800">💧 water conserved</a>
+            <div class="mt-4 sm:mt-0 space-x-4 sm:space-x-6 text-sm font-medium">
+                <a href="#why" class="text-gray-600 hover:text-blue-800 transition duration-300">Why Conserve?</a>
+                <a href="#tips" class="text-gray-600 hover:text-blue-800 transition duration-300">Tips</a>
+                <a href="#tools" class="text-gray-600 hover:text-blue-800 transition duration-300">Tools</a>
+                <a href="#case-studies" class="text-gray-600 hover:text-blue-800 transition duration-300">Case Studies</a>
+                <a href="#blog" class="text-gray-600 hover:text-blue-800 transition duration-300">Blog</a>
+            </div>
+        </nav>
+    </header>
 
-            <!-- Header Section -->
-            <header class="text-center mb-12 sm:mb-16 scroll-animate">
-                <div class="flex justify-center mb-4">
-                    <svg class="w-16 h-16 text-sky-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.00098C6.47715 2.00098 2 6.47812 2 12.001C2 17.5238 6.47715 22.001 12 22.001C17.5228 22.001 22 17.5238 22 12.001C22 6.47812 17.5228 2.00098 12 2.00098ZM12.2733 14.9304C11.2486 15.9551 9.43407 16.0682 8.26189 15.1953L12.2733 11.1838V14.9304ZM15.7391 11.8053C14.5669 12.6781 12.7524 12.565 11.7277 11.5394L15.7391 15.5509V11.8053ZM15.7391 9.00098V10.3341L10.2524 15.8208C9.96116 16.1121 9.48962 16.1121 9.19834 15.8208L7.13768 13.7602C6.8464 13.4689 6.8464 12.9973 7.13768 12.706L12.6244 7.21932C12.9157 6.92804 13.3872 6.92804 13.6785 7.21932L15.7391 9.27998V9.00098H17V11.001H15.7391Z"></g></svg>
+    <main>
+        <!-- Home Section -->
+        <section id="home" class="hero-banner h-screen flex items-center justify-center text-center text-white p-4">
+            <div class="card p-8 md:p-12">
+                <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight mb-4 text-blue-800">A Drop Saved is a Life Sustained.</h1>
+                <p class="text-lg sm:text-xl md:text-2xl mb-8 font-light max-w-2xl mx-auto text-gray-700">Discover simple, impactful ways to conserve water and protect our planet's most precious resource.</p>
+                <div class="space-y-4 sm:space-y-0 sm:space-x-4 flex flex-col sm:flex-row items-center justify-center">
+                    <a href="#tips" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-105">Start Saving Now</a>
+                    <a href="#blog" class="bg-white hover:bg-gray-200 text-blue-700 font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-105">Read Our Blog</a>
                 </div>
-                <h1 class="text-4xl sm:text-5xl font-bold text-white header-glow">
-                    Our Planet's Most Precious Resource: Water
-                </h1>
-                <p class="mt-4 text-lg text-indigo-200 max-w-3xl mx-auto">
-                    Understanding water's role, the challenges we face, and how we can all contribute to a sustainable future.
-                </p>
-            </header>
+            </div>
+        </section>
 
-            <!-- Main Content Sections -->
-            <main class="space-y-16">
-
-                <!-- Section 1: Uses of Water -->
-                <section class="content-card p-6 sm:p-10 scroll-animate">
-                    <h2 class="text-3xl font-bold text-gray-900 mb-6">The Vital Roles of Water</h2>
-                    <div class="grid md:grid-cols-2 gap-8 text-center">
-                        <div>
-                            <img src="https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?q=80&w=2070&auto=format&fit=crop" alt="Irrigation sprinklers on a farm field" class="rounded-lg shadow-md mb-4 w-full h-48 object-cover">
-                            <h3 class="text-xl font-semibold text-green-700">Agricultural Use</h3>
-                            <p class="text-gray-600 mt-2">The largest consumer of fresh water globally, crucial for irrigating crops and sustaining livestock to feed the world's population.</p>
+        <!-- Water Conservation Engine Section -->
+        <section id="impact-engine" class="py-16">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="card p-8 text-center">
+                    <h2 class="text-3xl sm:text-4xl font-bold text-blue-800 mb-2">Our Impact Engine</h2>
+                    <p class="mb-8 text-gray-600">See how small changes can make a big difference. Enter your daily habits below to calculate your potential water savings.</p>
+                    
+                    <div class="grid md:grid-cols-3 gap-8 mb-8">
+                        <!-- Low-Flow Showerhead -->
+                        <div class="card p-6">
+                            <h3 class="text-lg font-semibold text-blue-600 mb-2">Low-Flow Showerhead</h3>
+                            <input type="number" id="showerhead-input" class="w-full text-center text-2xl font-bold mb-1 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg p-2" placeholder="0">
+                            <span class="text-sm text-gray-500">liters/day</span>
                         </div>
-                        <div>
-                            <img src="https://images.unsplash.com/photo-1567427018141-0584cfcbf1b8?q=80&w=2070&auto=format&fit=crop" alt="Industrial factory pipes" class="rounded-lg shadow-md mb-4 w-full h-48 object-cover">
-                            <h3 class="text-xl font-semibold text-sky-700">Industrial Use</h3>
-                            <p class="text-gray-600 mt-2">Used for manufacturing, cooling processes, generating energy, and as a solvent in countless industrial applications.</p>
+                        
+                        <!-- Fixed Leaky Faucet -->
+                        <div class="card p-6">
+                            <h3 class="text-lg font-semibold text-blue-600 mb-2">Fixed Leaky Faucet</h3>
+                            <input type="number" id="faucet-input" class="w-full text-center text-2xl font-bold mb-1 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg p-2" placeholder="0">
+                            <span class="text-sm text-gray-500">liters/day</span>
+                        </div>
+                        
+                        <!-- Water-Efficient Dishwasher -->
+                        <div class="card p-6">
+                            <h3 class="text-lg font-semibold text-blue-600 mb-2">Water-Efficient Dishwasher</h3>
+                            <input type="number" id="dishwasher-input" class="w-full text-center text-2xl font-bold mb-1 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg p-2" placeholder="0">
+                            <span class="text-sm text-gray-500">liters/day</span>
                         </div>
                     </div>
-                </section>
+                    
+                    <button onclick="updateEngineStats()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-105">Calculate Savings</button>
+                    <div class="mt-8 text-xl font-bold text-blue-800">
+                        Total Water Conserved: <span id="total-gallons">0.00 liters</span>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-                <!-- Section 2: Water Scarcity -->
-                <section class="scroll-animate">
-                    <div class="md:grid md:grid-cols-2 md:gap-12 items-center">
-                        <div class="mb-8 md:mb-0">
-                            <img src="https://images.unsplash.com/photo-1569396116180-210c182bedb8?q=80&w=2069&auto=format&fit=crop" alt="Dry, cracked lake bed" class="rounded-2xl shadow-2xl w-full h-auto object-cover">
+        <!-- Why Conserve Water Section with Dynamic Flip Cards -->
+        <section id="why" class="py-16">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="card p-8">
+                    <h2 class="text-3xl sm:text-4xl font-bold text-center text-blue-700 mb-12">Why Conserve Water?</h2>
+                    <div id="whyConserveCardsContainer" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <!-- Dynamic cards will be rendered here by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Save Water Tips Section with Dynamic Flip Cards -->
+        <section id="tips" class="py-16">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="card p-8">
+                    <h2 class="text-3xl sm:text-4xl font-bold text-center text-blue-700 mb-12">Save Water Tips</h2>
+                    <div id="saveTipsCardsContainer" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <!-- Dynamic cards will be rendered here by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tools Section -->
+        <section id="tools" class="py-16">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="card p-8">
+                    <h2 class="text-3xl sm:text-4xl font-bold text-center text-blue-700 mb-12">Tools & Resources</h2>
+
+                    <!-- Water Usage Calculator -->
+                    <div class="card p-8 mb-8">
+                        <h3 class="text-2xl font-semibold mb-4 text-blue-600">Water Usage Calculator</h3>
+                        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div class="flex flex-col">
+                                <label for="showers" class="text-sm font-medium mb-1">Daily Showers (minutes)</label>
+                                <input type="number" id="showers" class="rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500" placeholder="e.g., 5">
+                            </div>
+                            <div class="flex flex-col">
+                                <label for="laundry" class="text-sm font-medium mb-1">Laundry Loads per week</label>
+                                <input type="number" id="laundry" class="rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500" placeholder="e.g., 2">
+                            </div>
+                            <div class="flex flex-col">
+                                <label for="dishwashing" class="text-sm font-medium mb-1">Dishwasher Loads per week</label>
+                                <input type="number" id="dishwashing" class="rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500" placeholder="e.g., 3">
+                            </div>
                         </div>
-                        <div class="text-white">
-                            <h2 class="text-3xl font-bold mb-4">The Global Water Crisis: A Present Reality</h2>
-                            <p class="text-indigo-200 text-lg mb-4">
-                                Water scarcity is not a future problem; it's happening now. Billions of people worldwide face severe water shortages for at least one month each year. Factors like climate change, population growth, and pollution are putting unprecedented stress on our freshwater supplies.
-                            </p>
-                            <p class="text-indigo-200 text-lg">
-                                In India, the situation is particularly critical, with major cities facing depleting groundwater levels. The time to act is now.
-                            </p>
+                        <button onclick="calculateWaterUsage()" class="mt-6 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition duration-300">Calculate Usage</button>
+                        <div id="usage-result" class="mt-6 text-lg font-semibold text-gray-800"></div>
+                    </div>
+
+                    <!-- Interactive Quiz -->
+                    <div class="card p-8">
+                        <h3 class="text-2xl font-semibold mb-4 text-blue-600">Water Wisdom Quiz</h3>
+                        <p class="mb-4 text-gray-600">Test your knowledge on water conservation with this quick quiz.</p>
+                        <div id="quiz-container">
+                            <div id="quiz-question" class="text-lg font-medium mb-4"></div>
+                            <div id="quiz-options" class="space-y-2"></div>
+                            <button onclick="checkAnswer()" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition duration-300">Submit</button>
+                            <div id="quiz-result" class="mt-4 text-lg font-semibold"></div>
                         </div>
                     </div>
-                </section>
+                </div>
+            </div>
+        </section>
 
-                <!-- Section 3: Wastewater to Drinking Water -->
-                <section class="content-card p-6 sm:p-10 scroll-animate">
-                    <h2 class="text-3xl font-bold text-gray-900 mb-2 text-center">From Waste to Wonder: The Water Recycling Journey</h2>
-                    <p class="text-center text-gray-600 mb-8 max-w-3xl mx-auto">Advanced water purification technology can safely transform wastewater into high-quality drinking water. This process, known as potable reuse, is a crucial solution for water-scarce regions. Here’s how it works:</p>
-                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <!-- Step 1 -->
-                        <div class="bg-slate-50 p-6 rounded-xl text-center step-card">
-                            <div class="flex justify-center mb-3"><span class="flex items-center justify-center w-12 h-12 rounded-full bg-indigo-500 text-white font-bold text-xl">1</span></div>
-                            <h3 class="text-lg font-semibold text-gray-800">Primary Treatment</h3>
-                            <p class="text-gray-600 text-sm mt-1">Wastewater passes through screens to remove large solids. It then sits in sedimentation tanks where heavier particles sink to the bottom.</p>
+        <!-- Case Studies Section -->
+        <section id="case-studies" class="py-16">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="card p-8">
+                    <h2 class="text-3xl sm:text-4xl font-bold text-center text-blue-700 mb-12">Inspiring Case Studies</h2>
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <!-- Case Study 1 -->
+                        <div class="card overflow-hidden">
+                            <img src="https://placehold.co/600x400/003366/FFFFFF?text=Project+Hydro" alt="Project Hydro Case Study" class="w-full h-48 object-cover">
+                            <div class="p-6">
+                                <h3 class="text-xl font-semibold mb-2 text-blue-600">Project Hydro: Community Rainwater Harvesting</h3>
+                                <p class="text-gray-600">A small village implemented a community-wide rainwater harvesting system, reducing their dependency on groundwater by 40% and ensuring a stable water supply during dry seasons.</p>
+                                <a href="#" class="inline-block mt-4 text-blue-600 hover:underline">Read More &rarr;</a>
+                            </div>
                         </div>
-                        <!-- Step 2 -->
-                        <div class="bg-slate-50 p-6 rounded-xl text-center step-card">
-                            <div class="flex justify-center mb-3"><span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500 text-white font-bold text-xl">2</span></div>
-                            <h3 class="text-lg font-semibold text-gray-800">Secondary Treatment</h3>
-                            <p class="text-gray-600 text-sm mt-1">Biological processes are used. Microorganisms consume organic matter, further cleaning the water.</p>
-                        </div>
-                        <!-- Step 3 -->
-                        <div class="bg-slate-50 p-6 rounded-xl text-center step-card">
-                            <div class="flex justify-center mb-3"><span class="flex items-center justify-center w-12 h-12 rounded-full bg-sky-500 text-white font-bold text-xl">3</span></div>
-                            <h3 class="text-lg font-semibold text-gray-800">Tertiary Treatment</h3>
-                            <p class="text-gray-600 text-sm mt-1">Advanced filtration, such as microfiltration and reverse osmosis, removes microscopic particles, bacteria, and viruses.</p>
-                        </div>
-                        <!-- Step 4 -->
-                        <div class="bg-slate-50 p-6 rounded-xl text-center step-card">
-                            <div class="flex justify-center mb-3"><span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500 text-white font-bold text-xl">4</span></div>
-                            <h3 class="text-lg font-semibold text-gray-800">Disinfection</h3>
-                            <p class="text-gray-600 text-sm mt-1">Ultraviolet (UV) light and chlorine are used to inactivate any remaining pathogens, ensuring the water is safe to drink.</p>
+                        <!-- Case Study 2 -->
+                        <div class="card overflow-hidden">
+                            <img src="https://placehold.co/600x400/003366/FFFFFF?text=Eco-Business" alt="Eco-Business Case Study" class="w-full h-48 object-cover">
+                            <div class="p-6">
+                                <h3 class="text-xl font-semibold mb-2 text-blue-600">The Eco-Business Initiative</h3>
+                                <p class="text-gray-600">A local factory installed a state-of-the-art water recycling plant, cutting their water consumption by 60% and setting a new standard for sustainable manufacturing in the region.</p>
+                                <a href="#" class="inline-block mt-4 text-blue-600 hover:underline">Read More &rarr;</a>
+                            </div>
                         </div>
                     </div>
-                </section>
+                </div>
+            </div>
+        </section>
 
-                <!-- Section 4: How to Save Water -->
-                <section class="scroll-animate">
-                    <h2 class="text-3xl font-bold text-white mb-8 text-center">Be a Water Hero: Simple Steps to Save Water</h2>
+        <!-- Blog/News Section -->
+        <section id="blog" class="py-16">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="card p-8">
+                    <h2 class="text-3xl sm:text-4xl font-bold text-center text-blue-700 mb-12">Latest News & Blog</h2>
                     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        <div class="bg-white/10 backdrop-blur-md p-6 rounded-xl text-white">
-                            <h3 class="font-semibold text-xl mb-2">Fix Leaks Promptly</h3>
-                            <p class="text-indigo-200">A single dripping tap can waste over 15,000 liters of water a year. Check all faucets, pipes, and toilets regularly.</p>
+                        <!-- Blog Post 1 -->
+                        <div class="card overflow-hidden">
+                            <img src="https://placehold.co/600x400/003366/FFFFFF?text=New+Policy" alt="Water Policy Update" class="w-full h-48 object-cover">
+                            <div class="p-6">
+                                <h3 class="text-xl font-semibold mb-2 text-blue-600">New Water Policy for Rural Areas</h3>
+                                <p class="text-sm text-gray-600 mb-4">January 20, 2025</p>
+                                <p class="text-gray-600">An overview of the new government policies aimed at improving water access and efficiency in rural communities.</p>
+                            </div>
                         </div>
-                        <div class="bg-white/10 backdrop-blur-md p-6 rounded-xl text-white">
-                            <h3 class="font-semibold text-xl mb-2">Take Shorter Showers</h3>
-                            <p class="text-indigo-200">Reducing your shower time by just two minutes can save up to 40 liters of water each time.</p>
+                        <!-- Blog Post 2 -->
+                        <div class="card overflow-hidden">
+                            <img src="https://placehold.co/600x400/003366/FFFFFF?text=Interview" alt="Expert Interview" class="w-full h-48 object-cover">
+                            <div class="p-6">
+                                <h3 class="text-xl font-semibold mb-2 text-blue-600">Interview with a Water Conservation Expert</h3>
+                                <p class="text-sm text-gray-600 mb-4">January 15, 2025</p>
+                                <p class="text-gray-600">We sit down with Dr. Anya Sharma to discuss her insights on urban water management and the future of conservation.</p>
+                            </div>
                         </div>
-                        <div class="bg-white/10 backdrop-blur-md p-6 rounded-xl text-white">
-                            <h3 class="font-semibold text-xl mb-2">Turn Off the Tap</h3>
-                            <p class="text-indigo-200">Don't let water run while brushing your teeth or washing dishes. This simple habit saves thousands of liters annually.</p>
-                        </div>
-                        <div class="bg-white/10 backdrop-blur-md p-6 rounded-xl text-white">
-                            <h3 class="font-semibold text-xl mb-2">Use Full Loads</h3>
-                            <p class="text-indigo-200">Only run your washing machine and dishwasher when they are completely full to maximize water efficiency.</p>
-                        </div>
-                        <div class="bg-white/10 backdrop-blur-md p-6 rounded-xl text-white">
-                            <h3 class="font-semibold text-xl mb-2">Install Water-Saving Fixtures</h3>
-                            <p class="text-indigo-200">Low-flow showerheads, faucet aerators, and dual-flush toilets can significantly reduce your household's water consumption.</p>
-                        </div>
-                        <div class="bg-white/10 backdrop-blur-md p-6 rounded-xl text-white">
-                            <h3 class="font-semibold text-xl mb-2">Harvest Rainwater</h3>
-                            <p class="text-indigo-200">Collect rainwater from your roof to use for watering plants, cleaning floors, and other non-potable uses.</p>
+                        <!-- Blog Post 3 -->
+                        <div class="card overflow-hidden">
+                            <img src="https://placehold.co/600x400/003366/FFFFFF?text=10+Ways" alt="Tips Article" class="w-full h-48 object-cover">
+                            <div class="p-6">
+                                <h3 class="text-xl font-semibold mb-2 text-blue-600">10 Simple Ways to Save Water at Home</h3>
+                                <p class="text-sm text-gray-600 mb-4">January 10, 2025</p>
+                                <p class="text-gray-600">A comprehensive guide to reducing your household water footprint, from the kitchen to the bathroom.</p>
+                            </div>
                         </div>
                     </div>
-                </section>
-            </main>
-            
-            <!-- Footer -->
-            
-
-        </div>
+                </div>
+            </div>
+        </section>
+        <footer style="background-color:#715DBB; color: #000000; text-align: center; padding: 1rem 0; font-size: 0.9rem; border-top: 1px solid #2d3748; margin-top: auto;">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; display: flex; justify-content: center; align-items: center; white-space: nowrap;">
+        <img src="images/LOGO.png" alt="Team TITANS Logo" style="height: 30px;vertical-align: middle;margin-right: 10px;border-radius: 30px;" />&copy; 2025 Smart Dust Bin. All rights reserved. Developed by Team TITANS.
     </div>
-    <footer class="bg-[#715DBB] text-[#000000] text-center text-sm mt-auto py-4 border-t border-[#2d3748]">
-  <div class="max-w-screen-xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-center sm:justify-between space-y-2 sm:space-y-0">
-    <div class="flex items-center space-x-2" style="justify-content: center;display: flex;align-items: center;margin-left: 350px;">
-        <p class="text-white">&copy; 2025 Smart Dust Bin. All rights reserved.</p>
-      <img src="images/LOGO.png" alt="Team TITANS Logo" class="h-8 rounded-full shadow-md" />
-      <span class="text-white">Developed by Team TITANS</span>
-    </div>
+</footer>
+    </main>
+    
 
     <script>
-        // JavaScript to trigger animations on scroll
-        document.addEventListener("DOMContentLoaded", function() {
-            const animatedElements = document.querySelectorAll('.scroll-animate');
-
-            // Use Intersection Observer if available for better performance
-            if ("IntersectionObserver" in window) {
-                const observer = new IntersectionObserver((entries, observer) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            entry.target.style.animation = 'fadeIn 1s ease-out forwards';
-                            observer.unobserve(entry.target);
-                        }
-                    });
-                }, { threshold: 0.1 });
-
-                animatedElements.forEach(el => {
-                    observer.observe(el);
-                });
-            } else {
-                // Fallback for older browsers that don't support Intersection Observer
-                function animateOnScroll() {
-                    animatedElements.forEach(el => {
-                        const rect = el.getBoundingClientRect();
-                        if (rect.top <= window.innerHeight - 50 && el.style.opacity !== "1") {
-                           el.style.animation = 'fadeIn 1s ease-out forwards';
-                        }
-                    });
-                }
-                window.addEventListener('scroll', animateOnScroll);
-                animateOnScroll(); // Trigger on load
+        // Data for "Why Conserve Water?" section
+        const whyConserveData = [
+            {
+                title: "Global Scarcity",
+                iconClass: "fa-solid fa-earth-americas",
+                backText: "The demand for fresh water is constantly growing, but the supply is finite. Conserving water helps ensure there is enough for everyone."
+            },
+            {
+                title: "Ecosystem Health",
+                iconClass: "fa-solid fa-seedling", // Modified icon for Ecosystem Health
+                backText: "Ecosystems depend on a delicate balance of water. Conservation prevents harm to aquatic habitats and protects wildlife that relies on them."
+            },
+            {
+                title: "Energy & Cost Savings",
+                iconClass: "fa-solid fa-bolt",
+                backText: "The less water you use, the less energy is required to deliver it to your home. This directly translates to lower bills and a smaller environmental impact."
             }
-        });
-    </script>
+        ];
 
+        // Data for "Save Water Tips" section
+        const saveTipsData = [
+            {
+                title: "Household Tips",
+                iconClass: "fa-solid fa-house-chimney",
+                backText: [
+                    "Fix leaky faucets and pipes.",
+                    "Install low-flow showerheads and toilets.",
+                    "Run dishwashers and washing machines only when full.",
+                    "Take shorter showers.",
+                    "Turn off the faucet while brushing your teeth."
+                ]
+            },
+            {
+                title: "Business Tips",
+                iconClass: "fa-solid fa-briefcase",
+                backText: [
+                    "Conduct regular water audits.",
+                    "Use water-efficient appliances and fixtures.",
+                    "Recycle and reuse water where possible.",
+                    "Educate employees on conservation practices."
+                ]
+            },
+            {
+                title: "Community Guidelines",
+                iconClass: "fa-solid fa-users",
+                backText: [
+                    "Report water leaks in public spaces.",
+                    "Participate in local conservation initiatives.",
+                    "Support policies that promote water efficiency.",
+                    "Use drought-tolerant plants in landscaping."
+                ]
+            }
+        ];
+
+        // Function to render the "Why Conserve Water?" cards
+        function renderWhyConserveCards() {
+            const container = document.getElementById('whyConserveCardsContainer');
+            container.innerHTML = whyConserveData.map(item => `
+                <div class="flip-card-container">
+                    <div class="flip-card">
+                        <div class="card flip-card-front p-6 text-center">
+                            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+                                <i class="${item.iconClass} text-blue-500 text-3xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">${item.title}</h3>
+                        </div>
+                        <div class="card flip-card-back p-6 flex items-center justify-center text-center text-gray-600">
+                            <p>${item.backText}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Function to render the "Save Water Tips" cards
+        function renderSaveTipsCards() {
+            const container = document.getElementById('saveTipsCardsContainer');
+            container.innerHTML = saveTipsData.map(item => `
+                <div class="flip-card-container">
+                    <div class="flip-card">
+                        <div class="card flip-card-front p-6 flex flex-col items-center justify-center">
+                            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+                                <i class="${item.iconClass} text-blue-500 text-3xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2 text-blue-600 text-center">${item.title}</h3>
+                        </div>
+                        <div class="card flip-card-back p-6 text-left">
+                            <h3 class="text-xl font-semibold mb-4 text-blue-600 text-center">${item.title}</h3>
+                            <ul class="list-disc list-inside space-y-2 text-gray-600">
+                                ${item.backText.map(tip => `<li>${tip}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // This is moved inside the window.onload function to ensure the cards exist when the listener is attached.
+        // New JavaScript to enable the flip effect
+        document.querySelectorAll('.flip-card').forEach(card => {
+            card.addEventListener('click', function() {
+                this.classList.toggle('flipped');
+            });
+        });
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Water Usage Calculator Logic
+        function calculateWaterUsage() {
+            const showers = parseFloat(document.getElementById('showers').value) || 0;
+            const laundry = parseFloat(document.getElementById('laundry').value) || 0;
+            const dishwashing = parseFloat(document.getElementById('dishwashing').value) || 0;
+
+            // Average water usage in liters per minute/load. (1 gallon ≈ 3.78541 liters)
+            const waterPerShowerMinute = 9.5; // Average low-flow showerhead in liters/min
+            const waterPerLaundryLoad = 75; // Water-efficient top-loader in liters/load
+            const waterPerDishwasherLoad = 23; // Water-efficient dishwasher in liters/load
+
+            // Calculate total daily usage
+            const totalDailyUsage = (showers * waterPerShowerMinute) +
+                                   (laundry * waterPerLaundryLoad / 7) +
+                                   (dishwashing * waterPerDishwasherLoad / 7);
+
+            const resultElement = document.getElementById('usage-result');
+            resultElement.innerHTML = `Estimated daily water usage: <strong>${totalDailyUsage.toFixed(2)} liters</strong>`;
+        }
+
+        // Water Conservation Impact Engine Logic
+        function updateEngineStats() {
+            // 1 gallon = 3.78541 liters
+            const showerheadSavingsGallons = parseFloat(document.getElementById('showerhead-input').value) || 0;
+            const faucetSavingsGallons = parseFloat(document.getElementById('faucet-input').value) || 0;
+            const dishwasherSavingsGallons = parseFloat(document.getElementById('dishwasher-input').value) || 0;
+
+            const showerheadSavingsLiters = showerheadSavingsGallons * 3.78541;
+            const faucetSavingsLiters = faucetSavingsGallons * 3.78541;
+            const dishwasherSavingsLiters = dishwasherSavingsGallons * 3.78541;
+
+            const totalSavingsLiters = showerheadSavingsLiters + faucetSavingsLiters + dishwasherSavingsLiters;
+
+            // Update the display on the page with liters
+            document.getElementById('total-gallons').textContent = `${totalSavingsLiters.toFixed(2)} liters`;
+        }
+
+        // Water Wisdom Quiz Logic
+        let allQuizQuestions = [
+            {
+                question: "Which of these household activities uses the most water?",
+                options: ["Washing dishes by hand", "Taking a 5-minute shower", "Running a full load of laundry"],
+                correctAnswer: "Taking a 5-minute shower"
+            },
+            {
+                question: "How much of the Earth's water is freshwater?",
+                options: ["70%", "2.5%", "15%"],
+                correctAnswer: "2.5%"
+            },
+            {
+                question: "A dripping faucet can waste how many liters of water per day?",
+                options: ["4 liters", "19 liters", "75 liters"],
+                correctAnswer: "19 liters"
+            },
+            {
+                question: "How much of the world's freshwater is trapped in glaciers and ice caps?",
+                options: ["About 10%", "About 70%", "About 90%"],
+                correctAnswer: "About 70%"
+            },
+            {
+                question: "Which action saves the most water?",
+                options: ["Turning off the tap while brushing your teeth", "Fixing a leaky toilet", "Washing a full load of dishes by hand"],
+                correctAnswer: "Fixing a leaky toilet"
+            },
+            {
+                question: "What is the average amount of water used for a single load of laundry in a standard top-loader washing machine?",
+                options: ["10-15 liters", "50-70 liters", "100-150 liters"],
+                correctAnswer: "100-150 liters"
+            },
+            {
+                question: "Using a broom instead of a hose to clean driveways can save how many liters of water?",
+                options: ["10 liters", "50 liters", "100 liters or more"],
+                correctAnswer: "100 liters or more"
+            },
+            {
+                question: "How much water can a family of four save per day by using a low-flow showerhead?",
+                options: ["20 liters", "150 liters", "250 liters"],
+                correctAnswer: "150 liters"
+            },
+            {
+                question: "What percentage of the human body is made up of water?",
+                options: ["About 40%", "About 60%", "About 80%"],
+                correctAnswer: "About 60%"
+            },
+            {
+                question: "Approximately how much water does a person use to flush a toilet?",
+                options: ["2-3 liters", "6-9 liters", "12-15 liters"],
+                correctAnswer: "6-9 liters"
+            },
+            {
+                question: "How many liters of water are needed to produce one liter of bottled water?",
+                options: ["1 liter", "2 liters", "3 liters"],
+                correctAnswer: "3 liters"
+            },
+            {
+                question: "What is the largest consumer of freshwater globally?",
+                options: ["Agriculture", "Industry", "Domestic use"],
+                correctAnswer: "Agriculture"
+            },
+            {
+                question: "How many liters of water are typically used for a 5-minute shower?",
+                options: ["10-20 liters", "30-50 liters", "75-95 liters"],
+                correctAnswer: "75-95 liters"
+            },
+            {
+                question: "A running tap while shaving can waste how many liters of water per minute?",
+                options: ["1 liter", "5 liters", "10 liters"],
+                correctAnswer: "5 liters"
+            },
+            {
+                question: "What is the term for water that has been used in the home, but not for toilets?",
+                options: ["Blackwater", "Greywater", "Wastewater"],
+                correctAnswer: "Greywater"
+            },
+            {
+                question: "Which of the following is NOT a good way to save water in the garden?",
+                options: ["Watering at midday", "Using mulch", "Collecting rainwater"],
+                correctAnswer: "Watering at midday"
+            },
+            {
+                question: "How much water is needed to grow one kilogram of rice?",
+                options: ["1,000 liters", "2,500 liters", "5,000 liters"],
+                correctAnswer: "2,500 liters"
+            },
+            {
+                question: "Which country has the highest average water consumption per person?",
+                options: ["Canada", "United States", "India"],
+                correctAnswer: "United States"
+            },
+            {
+                question: "How many liters of water can a single leaky toilet waste per day?",
+                options: ["15-30 liters", "75-150 liters", "300-500 liters"],
+                correctAnswer: "75-150 liters"
+            },
+            {
+                question: "What is the total amount of water on Earth?",
+                options: ["A fixed amount", "Increasing due to climate change", "Decreasing due to human use"],
+                correctAnswer: "A fixed amount"
+            },
+            {
+                question: "Which of the following is the most water-efficient way to wash dishes?",
+                options: ["By hand with a running tap", "By hand with a filled sink", "Using a modern dishwasher"],
+                correctAnswer: "Using a modern dishwasher"
+            },
+            {
+                question: "Approximately how much water does the average person drink per day?",
+                options: ["1 liter", "2-3 liters", "5 liters"],
+                correctAnswer: "2-3 liters"
+            },
+            {
+                question: "What does the term 'virtual water' refer to?",
+                options: ["Water from virtual reality games", "Water used to produce goods and services", "Water stored in clouds"],
+                correctAnswer: "Water used to produce goods and services"
+            },
+            {
+                question: "How can you check for a toilet leak without a plumber?",
+                options: ["Listen for a hissing sound", "Drop food coloring in the tank and check the bowl", "Flush it multiple times"],
+                correctAnswer: "Drop food coloring in the tank and check the bowl"
+            },
+            {
+                question: "What is the biggest source of indoor water use in a typical home?",
+                options: ["Showers", "Laundry", "Toilets"],
+                correctAnswer: "Toilets"
+            },
+            {
+                question: "Approximately how much water is used to produce a single cup of coffee?",
+                options: ["1 liter", "20 liters", "130 liters"],
+                correctAnswer: "130 liters"
+            },
+            {
+                question: "Which of these is a water-saving technique for your lawn?",
+                options: ["Watering daily", "Mowing the grass shorter", "Leaving grass clippings on the lawn"],
+                correctAnswer: "Leaving grass clippings on the lawn"
+            },
+            {
+                question: "What is a 'rain barrel' used for?",
+                options: ["To store drinking water", "To collect rainwater for garden use", "To measure rainfall"],
+                correctAnswer: "To collect rainwater for garden use"
+            },
+            {
+                question: "Which of these is a sign of water stress in an area?",
+                options: ["Regular rain showers", "Low river levels and dry lakes", "New water treatment plants"],
+                correctAnswer: "Low river levels and dry lakes"
+            },
+            {
+                question: "How many liters of water are needed to produce one pair of denim jeans?",
+                options: ["500 liters", "1,000 liters", "7,600 liters"],
+                correctAnswer: "7,600 liters"
+            },
+            // A final question to demonstrate the end of the list
+            {
+                question: "What is the color of the water in a clean lake?",
+                options: ["Blue", "Green", "Transparent"],
+                correctAnswer: "Transparent"
+            }
+        ];
+
+        // Function to get a random subset of questions
+        function getRandomQuizQuestions(numQuestions) {
+            const shuffled = allQuizQuestions.sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, numQuestions);
+        }
+
+        // Global variable for the questions to be used
+        let quizQuestions = getRandomQuizQuestions(5); // Get 5 random questions
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function displayQuestion() {
+            const questionData = quizQuestions[currentQuestionIndex];
+            document.getElementById('quiz-question').textContent = questionData.question;
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+            questionData.options.forEach(option => {
+                optionsContainer.innerHTML += `
+                    <label class="block cursor-pointer">
+                        <input type="radio" name="quiz-option" value="${option}" class="mr-2">
+                        ${option}
+                    </label>
+                `;
+            });
+            document.getElementById('quiz-result').textContent = '';
+        }
+
+        function checkAnswer() {
+            const selectedOption = document.querySelector('input[name="quiz-option"]:checked');
+            if (!selectedOption) {
+                document.getElementById('quiz-result').textContent = "Please select an answer.";
+                document.getElementById('quiz-result').classList.remove('text-green-600', 'text-red-600');
+                document.getElementById('quiz-result').classList.add('text-yellow-600');
+                return;
+            }
+
+            const isCorrect = selectedOption.value === quizQuestions[currentQuestionIndex].correctAnswer;
+            const resultElement = document.getElementById('quiz-result');
+
+            if (isCorrect) {
+                resultElement.textContent = "Correct! Well done.";
+                resultElement.classList.add('text-green-600');
+                resultElement.classList.remove('text-red-600');
+                score++;
+            } else {
+                resultElement.textContent = `Incorrect. The correct answer was: ${quizQuestions[currentQuestionIndex].correctAnswer}.`;
+                resultElement.classList.add('text-red-600');
+                resultElement.classList.remove('text-green-600');
+            }
+
+            // Move to the next question or end the quiz
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizQuestions.length) {
+                setTimeout(displayQuestion, 2000); // Wait 2 seconds before next question
+            } else {
+                setTimeout(() => {
+                    if (score === quizQuestions.length) {
+                        const pointsAwarded = 5;
+                        resultElement.textContent = `Congratulations! You answered all questions correctly and earned ${pointsAwarded} points! 🎉`;
+                    } else {
+                        resultElement.textContent = `Quiz finished! You scored ${score} out of ${quizQuestions.length}.`;
+                    }
+                    resultElement.classList.remove('text-red-600', 'text-green-600');
+                    resultElement.classList.add('text-blue-600');
+                    document.getElementById('quiz-options').innerHTML = '';
+                    document.getElementById('quiz-question').innerHTML = 'Quiz complete!';
+                }, 2000);
+            }
+        }
+
+        // Initialize quiz and other functions on page load
+        window.onload = function() {
+            displayQuestion();
+            // Call the new rendering functions to populate the dynamic sections
+            renderWhyConserveCards();
+            renderSaveTipsCards();
+            // Add event listeners for the new flip cards after they are rendered
+            document.querySelectorAll('.flip-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    this.classList.toggle('flipped');
+                });
+            });
+        };
+        
+        // This function will render the "Why Conserve Water" cards.
+        function renderWhyConserveCards() {
+            const whyConserveData = [
+                {
+                    title: "Global Scarcity",
+                    iconClass: "fa-solid fa-earth-americas",
+                    backText: "The demand for fresh water is constantly growing, but the supply is finite. Conserving water helps ensure there is enough for everyone."
+                },
+                {
+                    title: "Ecosystem Health",
+                    iconClass: "fa-solid fa-seedling", // Modified icon for Ecosystem Health
+                    backText: "Ecosystems depend on a delicate balance of water. Conservation prevents harm to aquatic habitats and protects wildlife that relies on them."
+                },
+                {
+                    title: "Energy & Cost Savings",
+                    iconClass: "fa-solid fa-bolt",
+                    backText: "The less water you use, the less energy is required to deliver it to your home. This directly translates to lower bills and a smaller environmental impact."
+                }
+            ];
+
+            const container = document.getElementById('whyConserveCardsContainer');
+            container.innerHTML = whyConserveData.map(item => `
+                <div class="flip-card-container">
+                    <div class="flip-card">
+                        <div class="card flip-card-front p-6 text-center">
+                            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+                                <i class="${item.iconClass} text-blue-500 text-3xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">${item.title}</h3>
+                        </div>
+                        <div class="card flip-card-back p-6 flex items-center justify-center text-center text-gray-600">
+                            <p>${item.backText}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // This function will render the "Save Water Tips" cards.
+        function renderSaveTipsCards() {
+            const saveTipsData = [
+                {
+                    title: "Household Tips",
+                    iconClass: "fa-solid fa-house-chimney",
+                    backText: [
+                        "Fix leaky faucets and pipes.",
+                        "Install low-flow showerheads and toilets.",
+                        "Run dishwashers and washing machines only when full.",
+                        "Take shorter showers.",
+                        "Turn off the faucet while brushing your teeth."
+                    ]
+                },
+                {
+                    title: "Business Tips",
+                    iconClass: "fa-solid fa-briefcase",
+                    backText: [
+                        "Conduct regular water audits.",
+                        "Use water-efficient appliances and fixtures.",
+                        "Recycle and reuse water where possible.",
+                        "Educate employees on conservation practices."
+                    ]
+                },
+                {
+                    title: "Community Guidelines",
+                    iconClass: "fa-solid fa-users",
+                    backText: [
+                        "Report water leaks in public spaces.",
+                        "Participate in local conservation initiatives.",
+                        "Support policies that promote water efficiency.",
+                        "Use drought-tolerant plants in landscaping."
+                    ]
+                }
+            ];
+
+            const container = document.getElementById('saveTipsCardsContainer');
+            container.innerHTML = saveTipsData.map(item => `
+                <div class="flip-card-container">
+                    <div class="flip-card">
+                        <div class="card flip-card-front p-6 flex flex-col items-center justify-center">
+                            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+                                <i class="${item.iconClass} text-blue-500 text-3xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2 text-blue-600 text-center">${item.title}</h3>
+                        </div>
+                        <div class="card flip-card-back p-6 text-left">
+                            <h3 class="text-xl font-semibold mb-4 text-blue-600 text-center">${item.title}</h3>
+                            <ul class="list-disc list-inside space-y-2 text-gray-600">
+                                ${item.backText.map(tip => `<li>${tip}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    </script>
 </body>
 </html>
